@@ -125,43 +125,75 @@ The Debt and Repayment Web Application is a comprehensive cloud-based system des
 7. **Multi-currency Support:** The system will handle single currency only
 8. **Audit Trail:** The system will not include comprehensive audit logging of all user actions
 
-## 6. Design Considerations
+## 6. Technical Stack & Architecture
 
-### 6.1 User Interface
+### 6.1 Frontend Technology
+- **Framework:** Vite (for fast development and optimized builds)
+- **UI Framework:** Tailwind CSS (utility-first CSS framework for responsive design)
+- **Language:** JavaScript/TypeScript
+- **State Management:** React Context API or Zustand (lightweight state management)
+- **Routing:** React Router (for single-page application navigation)
+
+### 6.2 Backend & Database
+- **Platform:** Supabase (PostgreSQL database with built-in authentication and real-time features)
+- **Database:** PostgreSQL (via Supabase)
+- **Authentication:** Supabase Auth (built-in user management with role-based access)
+- **API:** Supabase REST API and real-time subscriptions
+- **File Storage:** Supabase Storage (for Excel/CSV file uploads)
+
+### 6.3 Deployment & Hosting
+- **Platform:** Vercel (optimized for frontend deployment with serverless functions)
+- **Domain:** Custom domain with SSL certificate
+- **CDN:** Global content delivery network for fast loading
+- **Environment:** Production, staging, and development environments
+
+### 6.4 Additional Technologies
+- **Charts/Visualization:** Chart.js or Recharts (flexible based on implementation needs)
+- **File Processing:** SheetJS/xlsx (for Excel/CSV handling)
+- **Authentication:** JWT tokens (via Supabase Auth)
+- **Form Handling:** React Hook Form (for efficient form management)
+- **Data Validation:** Zod or Yup (for schema validation)
+
+## 7. Design Considerations
+
+### 7.1 User Interface
 - **Modern Web Design:** Clean, professional interface suitable for business use
-- **Responsive Layout:** Must work effectively on desktop, tablet, and mobile devices
+- **Responsive Layout:** Must work effectively on desktop, tablet, and mobile devices using Tailwind CSS
 - **Data Visualization:** Use of charts and graphs for financial data presentation
 - **Color Coding:** Consistent use of red/green for negative/positive values
-- **Intuitive Navigation:** Clear menu structure with descriptive icons
+- **Intuitive Navigation:** Clear menu structure with descriptive SVG icons
 
-### 6.2 User Experience
+### 7.2 User Experience
 - **Progressive Disclosure:** Show essential information first, with options to drill down
 - **Real-time Validation:** Immediate feedback on data entry errors
 - **Bulk Operations:** Support for importing and processing large datasets efficiently
 - **Search and Filter:** Powerful search capabilities with auto-suggestions
 - **Export Flexibility:** Multiple export options with customizable content
 
-## 7. Technical Considerations
+### 7.3 Technical Architecture
+- **Component-Based Design:** Modular React components for maintainability
+- **API-First Approach:** RESTful API design with Supabase integration
+- **Real-time Updates:** Live data synchronization using Supabase subscriptions
+- **Progressive Web App:** Offline capabilities and app-like experience
+- **Performance Optimization:** Code splitting, lazy loading, and efficient data fetching
 
-### 7.1 Architecture
-- **Cloud-based Deployment:** Designed for web hosting with scalable infrastructure
-- **Database Design:** Optimized for financial transaction data with proper indexing
-- **API Design:** RESTful API structure for future extensibility
-- **Security:** HTTPS encryption, input validation, SQL injection prevention
+## 8. Database Schema Design
 
-### 7.2 Performance
-- **Data Loading:** Efficient pagination and lazy loading for large datasets
-- **Caching:** Appropriate caching strategies for dashboard metrics
-- **File Processing:** Optimized handling of Excel/CSV file uploads
-- **Concurrent Users:** Support for multiple simultaneous users
+### 8.1 Core Tables
+- **users:** User accounts and authentication (managed by Supabase Auth)
+- **customers:** Customer information and contact details
+- **transactions:** Financial transactions with debt increases/decreases
+- **branches:** Branch information and management
+- **bank_accounts:** Bank account details and balances
+- **user_roles:** Role-based access control mapping
 
-### 7.3 Data Management
-- **Data Validation:** Comprehensive validation rules for financial data
-- **Error Handling:** Graceful handling of import errors and data inconsistencies
-- **Backup Strategy:** Regular data backup and recovery procedures
-- **Data Retention:** Configurable retention policies for historical data
+### 8.2 Key Relationships
+- Transactions linked to customers, branches, and bank accounts
+- Users assigned to specific roles and branches
+- Real-time subscriptions for dashboard updates
+- Row-level security policies for data access control
 
-## 8. Success Metrics
+## 9. Success Metrics
 
 1. **User Adoption:** 90% of target users actively using the system within 3 months of deployment
 2. **Data Accuracy:** Reduce data entry errors by 80% compared to manual processes
@@ -171,7 +203,33 @@ The Debt and Repayment Web Application is a comprehensive cloud-based system des
 6. **Data Completeness:** 95% of customer transactions captured in the system
 7. **Report Generation:** Reduce time to generate monthly reports from days to minutes
 
-## 9. Open Questions
+## 10. Development Phases
+
+### Phase 1: Core Infrastructure (Weeks 1-2)
+- Set up Vite project with Tailwind CSS
+- Configure Supabase project and database schema
+- Implement authentication system
+- Create basic layout and navigation
+
+### Phase 2: Data Management (Weeks 3-4)
+- Implement customer CRUD operations
+- Build transaction import system
+- Create data validation and error handling
+- Develop search and filter functionality
+
+### Phase 3: Dashboard & Analytics (Weeks 5-6)
+- Build interactive dashboard with charts
+- Implement real-time data updates
+- Create export functionality
+- Add responsive design optimizations
+
+### Phase 4: Testing & Deployment (Weeks 7-8)
+- Comprehensive testing and bug fixes
+- Performance optimization
+- Deploy to Vercel
+- User training and documentation
+
+## 11. Open Questions
 
 1. **Data Migration:** What existing systems or data sources need to be migrated to the new system?
 2. **Compliance Requirements:** Are there any specific regulatory or compliance requirements for financial data storage?
