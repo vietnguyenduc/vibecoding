@@ -114,6 +114,27 @@ The Debt and Repayment Web Application is a comprehensive cloud-based system des
    - The system must provide user authentication and session management
    - The system must allow different user types: admin, branch manager, staff
 
+### 4.7 Internationalization (i18n)
+
+10. **Multi-language Support**
+    - The system must support English and Vietnamese languages
+    - The system must provide a language switcher component for users to change languages
+    - The system must automatically detect user's preferred language from browser settings
+    - The system must persist language preference in local storage
+    - The system must provide language-specific formatting for:
+      - Currency: USD ($) for English, VND (₫) for Vietnamese
+      - Dates: US format (MM/DD/YYYY) for English, Vietnamese format (DD/MM/YYYY) for Vietnamese
+      - Numbers: US commas for English, Vietnamese dots for Vietnamese
+    - The system must translate all user-facing content including:
+      - Navigation menus and labels
+      - Form fields and validation messages
+      - Dashboard metrics and charts
+      - Error messages and notifications
+      - Export/import functionality
+      - User roles and permissions
+    - The system must update HTML lang attribute based on selected language
+    - The system must support right-to-left (RTL) language preparation for future expansion
+
 ## 5. Non-Goals (Out of Scope)
 
 1. **Advanced Accounting Features:** The system will not include general ledger, double-entry bookkeeping, or tax calculation features
@@ -122,7 +143,7 @@ The Debt and Repayment Web Application is a comprehensive cloud-based system des
 4. **Advanced Analytics:** The system will not include predictive analytics, machine learning, or complex financial modeling
 5. **Mobile App:** The system will be web-based only, no native mobile applications
 6. **Third-party Integrations:** The system will not integrate with external accounting software, banking APIs, or CRM systems in the initial version
-7. **Multi-currency Support:** The system will handle single currency only
+7. **Multi-currency Support:** The system will handle single currency per language (USD for English, VND for Vietnamese)
 8. **Audit Trail:** The system will not include comprehensive audit logging of all user actions
 
 ## 6. Technical Stack & Architecture
@@ -153,6 +174,7 @@ The Debt and Repayment Web Application is a comprehensive cloud-based system des
 - **Authentication:** JWT tokens (via Supabase Auth)
 - **Form Handling:** React Hook Form (for efficient form management)
 - **Data Validation:** Zod or Yup (for schema validation)
+- **Internationalization:** i18next and react-i18next (for multi-language support)
 
 ## 7. Design Considerations
 
