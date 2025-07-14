@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './useAuth';
-import { useTranslation } from 'react-i18next';
 
 interface SessionConfig {
   timeoutMinutes: number;
@@ -23,7 +22,6 @@ const DEFAULT_CONFIG: SessionConfig = {
 
 export const useSession = (config: Partial<SessionConfig> = {}) => {
   const { signOut } = useAuth();
-  const { t } = useTranslation();
   const [sessionState, setSessionState] = useState<SessionState>({
     isActive: true,
     timeRemaining: 0,

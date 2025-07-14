@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { databaseService } from '../../services/database';
 import { Customer } from '../../types';
-import { formatCurrency, formatDate, formatPhoneNumber } from '../../utils/formatting';
 import { LoadingFallback, ErrorFallback } from '../../components/UI/FallbackUI';
 import {
   CustomerSearch,

@@ -32,8 +32,6 @@ function App() {
             <Route path="import/customers" element={<CustomerImport />} />
           </Route>
           
-          {/* Catch all route */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>
     </Router>

@@ -4,9 +4,7 @@ import {
   convertToTransactions,
   cleanTransactionData,
   RawTransactionData,
-  ValidationResult,
 } from '../importUtils';
-import { Transaction, TransactionType } from '../../types';
 
 describe('Import Utils', () => {
   describe('parseTransactionData', () => {
@@ -182,7 +180,7 @@ describe('Import Utils', () => {
     });
 
     it('accepts valid transaction types', () => {
-      const validTypes: TransactionType[] = ['payment', 'charge', 'adjustment', 'refund'];
+      const validTypes: string[] = ['payment', 'charge', 'adjustment', 'refund'];
       
       validTypes.forEach(type => {
         const data = [{ ...validData[0], transaction_type: type }];

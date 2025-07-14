@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import { User, AuthState } from '../types'
+import { User } from '../types'
 
 interface AuthContextType {
   user: User | null
@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const refreshToken = async (): Promise<{ error: string | null }> => {
     try {
-      const { data, error } = await auth.session?.refresh()
+      const { error } = await auth.session?.refresh()
       if (error) {
         return { error: error.message }
       }

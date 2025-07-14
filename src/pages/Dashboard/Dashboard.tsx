@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { databaseService } from '../../services/database';
-import { formatCurrency, formatDate } from '../../utils/formatting';
+import { formatCurrency } from '../../utils/formatting';
 import { LoadingFallback, ErrorFallback } from '../../components/UI/FallbackUI';
 import {
   MetricsCard,

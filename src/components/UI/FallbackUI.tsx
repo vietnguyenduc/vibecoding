@@ -20,8 +20,6 @@ export const LoadingFallback: React.FC<LoadingFallbackProps> = ({
   message, 
   size = 'md' 
 }) => {
-  const { t } = useTranslation();
-
   const sizeClasses = {
     sm: 'py-4',
     md: 'py-8',
@@ -62,8 +60,6 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
   message, 
   retry 
 }) => {
-  const { t } = useTranslation();
-
   return (
     <div className="text-center py-8">
       <div className="inline-flex items-center justify-center w-12 h-12 mb-4 bg-red-100 rounded-full">
@@ -101,7 +97,7 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
               d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
             />
           </svg>
-          {t('common.retry')}
+          {useTranslation().t('common.retry')}
         </button>
       )}
     </div>

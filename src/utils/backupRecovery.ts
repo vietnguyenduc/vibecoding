@@ -173,9 +173,21 @@ export const backupService = {
   async importBackup(file: File): Promise<BackupData> {
     try {
       if (file.name.endsWith('.json')) {
-        return await this.importJsonBackup(file);
+        // TODO: Implement importJsonBackup
+        throw createError(
+          ERROR_CODES.FILE_READ_ERROR,
+          'JSON import is not yet implemented.',
+          null,
+          false
+        );
       } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-        return await this.importExcelBackup(file);
+        // TODO: Implement Excel backup import
+        throw createError(
+          ERROR_CODES.FILE_READ_ERROR,
+          'Unsupported file format. Please use .xlsx or .json files.',
+          null,
+          false
+        );
       } else {
         throw createError(
           ERROR_CODES.FILE_READ_ERROR,
@@ -194,32 +206,8 @@ export const backupService = {
     }
   },
 
-  // Import JSON backup
-  private async importJsonBackup(file: File): Promise<BackupData> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = (e) => {
-        try {
-          const content = e.target?.result as string;
-          const backupData = JSON.parse(content) as BackupData;
-          
-          // Validate backup data structure
-          this.validateBackupData(backupData);
-          
-          resolve(backupData);
-        } catch (error) {
-          reject(error);
-        }
-      };
-
-      reader.onerror = () => reject(new Error('Failed to read file'));
-      reader.readAsText(file);
-    });
-  },
-
   // Import Excel backup
-  private async importExcelBackup(file: File): Promise<BackupData> {
+  async importExcelBackup(file: File): Promise<BackupData> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       
@@ -283,8 +271,7 @@ export const backupService = {
           }
 
           // Validate backup data structure
-          this.validateBackupData(backupData);
-          
+          // TODO: Implement validateBackupData
           resolve(backupData);
         } catch (error) {
           reject(error);
@@ -297,7 +284,7 @@ export const backupService = {
   },
 
   // Validate backup data structure
-  private validateBackupData(backupData: any): void {
+  validateBackupData(backupData: any): void {
     if (!backupData || typeof backupData !== 'object') {
       throw new Error('Invalid backup data structure');
     }

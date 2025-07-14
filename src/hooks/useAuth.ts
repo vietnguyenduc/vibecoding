@@ -69,9 +69,8 @@ export const useAuth = () => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setAuthState(prev => ({ ...prev, loading: true }))
-
         if (event === 'SIGNED_IN' && session?.user) {
+          setAuthState(prev => ({ ...prev, loading: true }));
           try {
             // Fetch user profile
             const { data: userProfile, error: profileError } = await supabase
@@ -110,6 +109,7 @@ export const useAuth = () => {
             error: null,
           })
         } else {
+          // For all other events, do not set loading: true
           setAuthState(prev => ({ ...prev, loading: false }))
         }
       }

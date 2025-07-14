@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { Transaction, ImportData, ImportError, Customer } from '../../types';
 import { validateTransactionData, parseTransactionData } from '../../utils/importUtils';
 import { formatCurrency, formatDate } from '../../utils/formatting';
-import { LoadingFallback, ErrorFallback } from '../../components/UI/FallbackUI';
+import { LoadingFallback } from '../../components/UI/FallbackUI';
 import { databaseService } from '../../services/database';
 
 interface TransactionImportProps {
@@ -154,7 +154,7 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
 
     try {
       const parsed = parseTransactionData(rawData);
-      const validation = validateTransactionData(parsed, user?.branch_id);
+      const validation = validateTransactionData(parsed);
       
       // Extract unmatched customer names
       const customerNames = new Set(parsed.map(row => row.customer_name.trim()));

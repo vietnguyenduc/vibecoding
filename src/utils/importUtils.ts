@@ -1,5 +1,4 @@
 import { Transaction, ImportError, TransactionType } from '../types';
-import { validateEmail, validatePhone } from './validation';
 
 export interface RawTransactionData {
   customer_name: string;
@@ -112,8 +111,7 @@ function parseCSVLine(line: string): string[] {
  * Validate transaction data and return validation results
  */
 export function validateTransactionData(
-  data: RawTransactionData[], 
-  branchId?: string
+  data: RawTransactionData[]
 ): ValidationResult {
   const errors: ImportError[] = [];
   

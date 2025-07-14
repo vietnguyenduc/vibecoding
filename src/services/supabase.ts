@@ -58,10 +58,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 })
 
 // JWT token management utilities
-export const getAccessToken = (): string | null => {
+export const getAccessToken = async (): Promise<string | null> => {
   try {
-    const session = supabase.auth.getSession()
-    return session?.access_token || null
+    const sessionResult = await supabase.auth.getSession();
+    return sessionResult.data.session?.access_token || null;
   } catch (error) {
     console.error('Error getting access token:', error)
     return null

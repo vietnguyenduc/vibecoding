@@ -10,7 +10,6 @@ import {
   generateCleaningReport,
   CleaningOptions,
 } from '../dataCleaning';
-import { TransactionType } from '../../types';
 
 describe('Data Cleaning Utils', () => {
   describe('cleanValue', () => {
@@ -258,17 +257,12 @@ describe('Data Cleaning Utils', () => {
         { name: 'Jane Smith', amount: '2,345.67' },
       ];
 
-      const cleanedData = [
-        { name: 'John Doe', amount: '1234.56' },
-        { name: 'Jane Smith', amount: '2345.67' },
-      ];
-
       const changesByColumn = {
         name: 1,
         amount: 2,
       };
 
-      const report = generateCleaningReport(originalData, cleanedData, changesByColumn);
+      const report = generateCleaningReport(originalData, changesByColumn);
 
       expect(report.summary).toContain('2 rows');
       expect(report.summary).toContain('3 changes');
@@ -278,7 +272,7 @@ describe('Data Cleaning Utils', () => {
     });
 
     it('handles empty dataset', () => {
-      const report = generateCleaningReport([], [], {});
+      const report = generateCleaningReport([], {});
 
       expect(report.summary).toContain('0 rows');
       expect(report.summary).toContain('0 changes');
@@ -292,16 +286,11 @@ describe('Data Cleaning Utils', () => {
         { name: 'Jane', email: 'TEST@EXAMPLE.COM' },
       ];
 
-      const cleanedData = [
-        { name: 'John', email: 'test@example.com' },
-        { name: 'Jane', email: 'test@example.com' },
-      ];
-
       const changesByColumn = {
         email: 1,
       };
 
-      const report = generateCleaningReport(originalData, cleanedData, changesByColumn);
+      const report = generateCleaningReport(originalData, changesByColumn);
 
       expect(report.details.totalChanges).toBe(1);
       expect(report.details.changesByColumn.email).toBe(1);

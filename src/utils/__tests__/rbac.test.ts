@@ -11,7 +11,6 @@ import {
   usePermissions,
   PERMISSIONS,
   ROLE_HIERARCHY,
-  Permission,
 } from '../rbac';
 import { UserRole } from '../../types';
 

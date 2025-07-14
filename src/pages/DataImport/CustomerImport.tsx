@@ -1,10 +1,9 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as XLSX from 'xlsx';
 import { useAuth } from '../../hooks/useAuth';
 import { Customer, ImportData, ImportError } from '../../types';
-import { formatCurrency, formatDate } from '../../utils/formatting';
-import { LoadingFallback, ErrorFallback } from '../../components/UI/FallbackUI';
+import { LoadingFallback } from '../../components/UI/FallbackUI';
 import { databaseService } from '../../services/database';
 
 interface CustomerImportProps {
@@ -49,7 +48,7 @@ const CustomerImport: React.FC<CustomerImportProps> = ({ onImportComplete }) => 
     const processFile = async () => {
       try {
         const parsed = await parseCustomerFile(importData.file!);
-        const validation = validateCustomerData(parsed, user?.branch_id);
+        const validation = validateCustomerData(parsed);
         
         setProcessedData({
           data: parsed,
@@ -66,7 +65,7 @@ const CustomerImport: React.FC<CustomerImportProps> = ({ onImportComplete }) => 
     };
 
     processFile();
-  }, [importData.file, user?.branch_id]);
+  }, [importData.file]);
 
   // Update import data when processed data changes
   React.useEffect(() => {
@@ -542,7 +541,7 @@ function parseCustomerFile(file: File): Promise<RawCustomerData[]> {
         const headers = jsonData[0] as string[];
         const rows = jsonData.slice(1) as any[][];
 
-        const parsedData: RawCustomerData[] = rows.map((row, index) => {
+        const parsedData: RawCustomerData[] = rows.map(row => {
           const customerData: RawCustomerData = {
             full_name: '',
             phone: '',
@@ -595,7 +594,7 @@ function parseCustomerFile(file: File): Promise<RawCustomerData[]> {
   });
 }
 
-function validateCustomerData(data: RawCustomerData[], branchId?: string): { isValid: boolean; errors: ImportError[] } {
+function validateCustomerData(data: RawCustomerData[]): { isValid: boolean; errors: ImportError[] } {
   const errors: ImportError[] = [];
   
   data.forEach((row, index) => {

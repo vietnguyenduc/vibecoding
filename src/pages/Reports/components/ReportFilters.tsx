@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { ReportType, ReportFilters as ReportFiltersType } from '../../../types';
-import { useAuth } from '../../../hooks/useAuth';
 
 interface ReportFiltersProps {
   filters: ReportFiltersType;
@@ -16,7 +15,6 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
   reportType,
 }) => {
   const { t } = useTranslation();
-  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleQuickDateSelect = (range: 'today' | 'week' | 'month' | 'quarter' | 'year' | 'custom') => {

@@ -266,7 +266,7 @@ const Reports: React.FC = () => {
       const exportData = await generateExportData(format, options);
       
       // Download file
-      downloadFile(exportData, format, state.selectedReportType!);
+      downloadFile(exportData, format);
       
       setState(prev => ({ ...prev, exportProgress: 100 }));
     } catch (error) {
@@ -290,7 +290,7 @@ const Reports: React.FC = () => {
   };
 
   // Download file
-  const downloadFile = (exportData: any, format: ExportFormat, reportType: ReportType) => {
+  const downloadFile = (exportData: any, format: ExportFormat) => {
     const element = document.createElement('a');
     
     if (format === 'excel') {

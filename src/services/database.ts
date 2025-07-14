@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Customer, Transaction, BankAccount, Branch, User, ImportError } from '../types';
+import { Customer, Transaction, BankAccount, Branch, ImportError } from '../types';
 import { RawTransactionData } from '../utils/importUtils';
 
 // Customer Operations
