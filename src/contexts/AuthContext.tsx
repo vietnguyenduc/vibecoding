@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const { error } = await auth.session?.refresh()
       if (error) {
-        return { error: error.message }
+        return { error: (error as any).message }
       }
       return { error: null }
     } catch (error) {

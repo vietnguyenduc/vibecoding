@@ -1,12 +1,12 @@
 import { format, parseISO } from 'date-fns';
 
 // Currency formatting
-export const formatCurrency = (amount: number, currency = 'USD'): string => {
-  return new Intl.NumberFormat('en-US', {
+export const formatCurrency = (amount: number, currency = 'VND'): string => {
+  return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(amount);
 };
 

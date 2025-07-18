@@ -32,7 +32,7 @@ const Dashboard: React.FC = () => {
     setError(null);
 
     try {
-      const result = await databaseService.dashboard.getDashboardMetrics(user.branch_id);
+      const result = await databaseService.dashboard.getDashboardMetrics(user.branch_id, timeRange);
       
       if (result.error) {
         setError(result.error);
@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [user?.branch_id]);
+  }, [user?.branch_id, timeRange]);
 
   // Load data on component mount and when time range changes
   useEffect(() => {
@@ -59,8 +59,8 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 py-8 w-full">
+        <div className="px-4 sm:px-6 lg:px-8 w-full">
           <LoadingFallback 
             title={t('dashboard.loading')}
             message={t('dashboard.loadingData')}
@@ -73,8 +73,8 @@ const Dashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 py-8 w-full">
+        <div className="px-4 sm:px-6 lg:px-8 w-full">
           <ErrorFallback 
             title={t('dashboard.error')}
             message={error}
@@ -87,8 +87,8 @@ const Dashboard: React.FC = () => {
 
   if (!metrics) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 py-8 w-full">
+        <div className="px-4 sm:px-6 lg:px-8 w-full">
           <div className="text-center">
             <h3 className="text-lg font-medium text-gray-900">
               {t('dashboard.noData')}
@@ -103,21 +103,20 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-4 w-full">
+      <div className="px-4 sm:px-6 lg:px-8 w-full">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900">
                 {t('dashboard.title')}
               </h1>
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-1 text-sm text-gray-600">
                 {t('dashboard.subtitle')}
               </p>
             </div>
-            
-            <div className="mt-4 sm:mt-0">
+            <div className="mt-2 sm:mt-0">
               <TimeRangeSelector 
                 value={timeRange}
                 onChange={setTimeRange}
@@ -125,9 +124,8 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-
         {/* Key Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4 w-full">
           <MetricsCard
             title={t('dashboard.totalOutstanding')}
             value={formatCurrency(metrics.totalOutstanding)}
@@ -136,7 +134,6 @@ const Dashboard: React.FC = () => {
             icon="currency"
             color="primary"
           />
-          
           <MetricsCard
             title={t('dashboard.activeCustomers')}
             value={metrics.activeCustomers.toString()}
@@ -145,108 +142,105 @@ const Dashboard: React.FC = () => {
             icon="users"
             color="success"
           />
-          
           <MetricsCard
-            title={t('dashboard.monthlyTransactions')}
-            value={metrics.monthlyTransactions.toString()}
-            change={metrics.monthlyTransactionsChange}
-            changeType={metrics.monthlyTransactionsChange >= 0 ? 'increase' : 'decrease'}
+            title={t('dashboard.transactionsInPeriod', { period: t(`dashboard.timeRange.${timeRange}`) })}
+            value={metrics.transactionsInPeriod.toString()}
+            change={metrics.transactionsInPeriodChange}
+            changeType={metrics.transactionsInPeriodChange >= 0 ? 'increase' : 'decrease'}
             icon="chart"
             color="warning"
           />
-          
           <MetricsCard
-            title={t('dashboard.totalTransactions')}
-            value={metrics.totalTransactions.toString()}
-            change={metrics.totalTransactionsChange}
-            changeType={metrics.totalTransactionsChange >= 0 ? 'increase' : 'decrease'}
-            icon="database"
+            title={t('dashboard.transactionAmountsInPeriod', { period: t(`dashboard.timeRange.${timeRange}`) })}
+            value=""
+            icon="currency"
             color="info"
+            dualValues={{
+              income: formatCurrency(metrics.transactionIncomeInPeriod),
+              debt: formatCurrency(metrics.transactionDebtInPeriod),
+              incomeChange: metrics.transactionIncomeChange,
+              debtChange: metrics.transactionDebtChange
+            }}
           />
         </div>
-
         {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 w-full">
           {/* Balance by Bank Account Chart */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+          <div className="bg-white rounded-lg shadow w-full">
+            <div className="px-4 py-3 border-b border-gray-200">
+              <h3 className="text-base font-medium text-gray-900">
                 {t('dashboard.balanceByBank')}
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-xs text-gray-500">
                 {t('dashboard.balanceByBankDescription')}
               </p>
             </div>
-            <div className="p-6">
+            <div className="p-4">
               <BalanceByBankChart data={metrics.balanceByBankAccount} />
             </div>
           </div>
-
           {/* Cash Flow Chart */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+          <div className="bg-white rounded-lg shadow w-full">
+            <div className="px-4 py-3 border-b border-gray-200">
+              <h3 className="text-base font-medium text-gray-900">
                 {t('dashboard.cashFlow')}
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-xs text-gray-500">
                 {t('dashboard.cashFlowDescription')}
               </p>
             </div>
-            <div className="p-6">
+            <div className="p-4">
               <CashFlowChart data={metrics.cashFlowData} timeRange={timeRange} />
             </div>
           </div>
         </div>
-
         {/* Balance Breakdown by Branch */}
-        <div className="bg-white rounded-lg shadow mb-8">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">
+        <div className="bg-white rounded-lg shadow mb-4 w-full">
+          <div className="px-4 py-3 border-b border-gray-200">
+            <h3 className="text-base font-medium text-gray-900">
               {t('dashboard.balanceByBranch')}
             </h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-xs text-gray-500">
               {t('dashboard.balanceByBranchDescription')}
             </p>
           </div>
-          <div className="p-6">
-            <BalanceBreakdown data={metrics.balanceByBranch} />
+          <div className="p-4">
+            <BalanceBreakdown data={metrics.transactionAmountsByBranch} />
           </div>
         </div>
-
         {/* Lists Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
           {/* Recent Transactions */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+          <div className="bg-white rounded-lg shadow w-full">
+            <div className="px-4 py-3 border-b border-gray-200">
+              <h3 className="text-base font-medium text-gray-900">
                 {t('dashboard.recentTransactions')}
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-xs text-gray-500">
                 {t('dashboard.recentTransactionsDescription')}
               </p>
             </div>
-            <div className="p-6">
+            <div className="p-4">
               <RecentTransactions 
                 transactions={metrics.recentTransactions}
-                maxItems={10}
+                maxItems={8}
               />
             </div>
           </div>
-
           {/* Top Customers */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+          <div className="bg-white rounded-lg shadow w-full">
+            <div className="px-4 py-3 border-b border-gray-200">
+              <h3 className="text-base font-medium text-gray-900">
                 {t('dashboard.topCustomers')}
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-xs text-gray-500">
                 {t('dashboard.topCustomersDescription')}
               </p>
             </div>
-            <div className="p-6">
+            <div className="p-4">
               <TopCustomers 
                 customers={metrics.topCustomers}
-                maxItems={10}
+                maxItems={8}
               />
             </div>
           </div>

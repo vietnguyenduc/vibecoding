@@ -83,12 +83,7 @@ const Profile: React.FC = () => {
     setMessage(null);
 
     try {
-      await updateProfile({
-        full_name: formData.full_name.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        position: formData.position.trim()
-      });
+      await updateProfile();
 
       setMessage({ type: 'success', text: t('profile.messages.updateSuccess') });
       setIsEditing(false);

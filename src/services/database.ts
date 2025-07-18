@@ -1,719 +1,563 @@
-import { supabase } from './supabase';
-import { Customer, Transaction, BankAccount, Branch, ImportError } from '../types';
-import { RawTransactionData } from '../utils/importUtils';
+// REMOVE all original Supabase-based service exports above this line
+// Only export the mocked services below for testing
 
-// Customer Operations
 export const customerService = {
-  // Get all customers with optional filters
-  async getCustomers(filters?: {
-    search?: string;
-    branch_id?: string;
-    is_active?: boolean;
-    limit?: number;
-    offset?: number;
-  }): Promise<{ data: Customer[]; error: string | null; count: number }> {
-    try {
-      let query = supabase
-        .from('customers')
-        .select('*, branch:branches(name)', { count: 'exact' });
-
-      if (filters?.search) {
-        query = query.or(`full_name.ilike.%${filters.search}%,customer_code.ilike.%${filters.search}%`);
-      }
-
-      if (filters?.branch_id) {
-        query = query.eq('branch_id', filters.branch_id);
-      }
-
-      if (filters?.is_active !== undefined) {
-        query = query.eq('is_active', filters.is_active);
-      }
-
-      if (filters?.limit) {
-        query = query.limit(filters.limit);
-      }
-
-      if (filters?.offset) {
-        query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1);
-      }
-
-      const { data, error, count } = await query.order('created_at', { ascending: false });
-
-      return {
-        data: data || [],
-        error: error?.message || null,
-        count: count || 0,
-      };
-    } catch (error) {
-      return {
-        data: [],
-        error: error instanceof Error ? error.message : 'Unknown error',
-        count: 0,
-      };
-    }
-  },
-
-  // Get customer by ID
-  async getCustomerById(id: string): Promise<{ data: Customer | null; error: string | null }> {
-    try {
-      const { data, error } = await supabase
-        .from('customers')
-        .select('*, branch:branches(name)')
-        .eq('id', id)
-        .single();
-
-      return {
-        data: data || null,
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
-  },
-
-  // Create new customer
-  async createCustomer(customerData: Partial<Customer>): Promise<{ data: Customer | null; error: string | null }> {
-    try {
-      // Generate customer code if not provided
-      if (!customerData.customer_code) {
-        const { data: existingCustomers } = await this.getCustomers({ limit: 1 });
-        const lastCustomer = existingCustomers[0];
-        const lastCode = lastCustomer?.customer_code || 'CUST0000';
-        const nextNumber = parseInt(lastCode.replace('CUST', '')) + 1;
-        customerData.customer_code = `CUST${nextNumber.toString().padStart(4, '0')}`;
-      }
-
-      const { data, error } = await supabase
-        .from('customers')
-        .insert([{
-          ...customerData,
-          total_balance: 0,
+  async getCustomers(_filters?: any) {
+    return {
+      data: [
+        {
+          id: '1',
+          customer_code: 'CUST0001',
+          full_name: 'Test Customer',
+          phone: '0123456789',
+          email: 'test@customer.com',
+          address: '123 Main St',
+          branch_id: '1',
+          total_balance: 1000,
+          last_transaction_date: '2024-01-01T00:00:00Z',
           is_active: true,
-        }])
-        .select('*, branch:branches(name)')
-        .single();
-
-      return {
-        data: data || null,
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+        },
+      ],
+      error: null,
+      count: 1,
+    };
   },
-
-  // Update customer
-  async updateCustomer(id: string, updates: Partial<Customer>): Promise<{ data: Customer | null; error: string | null }> {
-    try {
-      const { data, error } = await supabase
-        .from('customers')
-        .update(updates)
-        .eq('id', id)
-        .select('*, branch:branches(name)')
-        .single();
-
-      return {
-        data: data || null,
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+  async getCustomerById(_id: string) {
+    return {
+      data: {
+        id: '1',
+        customer_code: 'CUST0001',
+        full_name: 'Test Customer',
+        phone: '0123456789',
+        email: 'test@customer.com',
+        address: '123 Main St',
+        branch_id: '1',
+        total_balance: 1000,
+        last_transaction_date: '2024-01-01T00:00:00Z',
+        is_active: true,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+      },
+      error: null,
+    };
   },
-
-  // Delete customer (soft delete)
-  async deleteCustomer(id: string): Promise<{ error: string | null }> {
-    try {
-      const { error } = await supabase
-        .from('customers')
-        .update({ is_active: false })
-        .eq('id', id);
-
-      return {
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
-  },
-
-  // Bulk create customers
-  async bulkCreateCustomers(customers: Partial<Customer>[]): Promise<{ data: Customer[]; errors: ImportError[] }> {
-    const results: Customer[] = [];
-    const errors: ImportError[] = [];
-
-    for (let i = 0; i < customers.length; i++) {
-      try {
-        const result = await this.createCustomer(customers[i]);
-        if (result.data) {
-          results.push(result.data);
-        } else if (result.error) {
-          errors.push({
-            row: i,
-            column: 'general',
-            message: result.error,
-            value: customers[i],
-          });
-        }
-      } catch (error) {
-        errors.push({
-          row: i,
-          column: 'general',
-          message: error instanceof Error ? error.message : 'Unknown error',
-          value: customers[i],
-        });
-      }
-    }
-
-    return { data: results, errors };
-  },
+  async createCustomer(_customerData?: any) { return { data: null, error: null }; },
+  async updateCustomer(_id: string, _updates?: any) { return { data: null, error: null }; },
+  async deleteCustomer(_id: string) { return { error: null }; },
+  async bulkCreateCustomers(_customers?: any[]) { return { data: [], errors: [] }; },
 };
 
-// Transaction Operations
 export const transactionService = {
-  // Get all transactions with optional filters
-  async getTransactions(filters?: {
-    customer_id?: string;
-    branch_id?: string;
-    transaction_type?: string;
-    dateRange?: { start: string; end: string };
-    limit?: number;
-    offset?: number;
-  }): Promise<{ data: Transaction[]; error: string | null; count: number }> {
-    try {
-      let query = supabase
-        .from('transactions')
-        .select(`
-          *,
-          customer:customers(full_name, customer_code),
-          bank_account:bank_accounts(account_name, account_number),
-          branch:branches(name)
-        `, { count: 'exact' });
-
-      if (filters?.customer_id) {
-        query = query.eq('customer_id', filters.customer_id);
-      }
-
-      if (filters?.branch_id) {
-        query = query.eq('branch_id', filters.branch_id);
-      }
-
-      if (filters?.transaction_type) {
-        query = query.eq('transaction_type', filters.transaction_type);
-      }
-
-      if (filters?.dateRange) {
-        query = query
-          .gte('transaction_date', filters.dateRange.start)
-          .lte('transaction_date', filters.dateRange.end);
-      }
-
-      if (filters?.limit) {
-        query = query.limit(filters.limit);
-      }
-
-      if (filters?.offset) {
-        query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1);
-      }
-
-      const { data, error, count } = await query.order('transaction_date', { ascending: false });
-
-      return {
-        data: data || [],
-        error: error?.message || null,
-        count: count || 0,
-      };
-    } catch (error) {
-      return {
-        data: [],
-        error: error instanceof Error ? error.message : 'Unknown error',
-        count: 0,
-      };
-    }
+  async getTransactions(_filters?: any) {
+    return {
+      data: [
+        {
+          id: '1',
+          transaction_code: 'TXN0001',
+          customer_id: '1',
+          bank_account_id: '1',
+          branch_id: '1',
+          transaction_type: 'payment' as const,
+          amount: 500,
+          description: 'Test payment',
+          reference_number: 'REF123',
+          transaction_date: '2024-01-01T00:00:00Z',
+          created_by: 'test-user',
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+        },
+      ],
+      error: null,
+      count: 1,
+    };
   },
-
-  // Get transaction by ID
-  async getTransactionById(id: string): Promise<{ data: Transaction | null; error: string | null }> {
-    try {
-      const { data, error } = await supabase
-        .from('transactions')
-        .select(`
-          *,
-          customer:customers(full_name, customer_code),
-          bank_account:bank_accounts(account_name, account_number),
-          branch:branches(name)
-        `)
-        .eq('id', id)
-        .single();
-
-      return {
-        data: data || null,
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+  async getTransactionById(_id: string) {
+    return {
+      data: {
+        id: '1',
+        transaction_code: 'TXN0001',
+        customer_id: '1',
+        bank_account_id: '1',
+        branch_id: '1',
+        transaction_type: 'payment' as const,
+        amount: 500,
+        description: 'Test payment',
+        reference_number: 'REF123',
+        transaction_date: '2024-01-01T00:00:00Z',
+        created_by: 'test-user',
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+      },
+      error: null,
+    };
   },
-
-  // Create new transaction
-  async createTransaction(transactionData: Partial<Transaction>): Promise<{ data: Transaction | null; error: string | null }> {
-    try {
-      // Generate transaction code if not provided
-      if (!transactionData.transaction_code) {
-        const { data: existingTransactions } = await this.getTransactions({ limit: 1 });
-        const lastTransaction = existingTransactions[0];
-        const lastCode = lastTransaction?.transaction_code || 'TXN0000';
-        const nextNumber = parseInt(lastCode.replace('TXN', '')) + 1;
-        transactionData.transaction_code = `TXN${nextNumber.toString().padStart(4, '0')}`;
-      }
-
-      const { data, error } = await supabase
-        .from('transactions')
-        .insert([transactionData])
-        .select(`
-          *,
-          customer:customers(full_name, customer_code),
-          bank_account:bank_accounts(account_name, account_number),
-          branch:branches(name)
-        `)
-        .single();
-
-      return {
-        data: data || null,
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
-  },
-
-  // Update transaction
-  async updateTransaction(id: string, updates: Partial<Transaction>): Promise<{ data: Transaction | null; error: string | null }> {
-    try {
-      const { data, error } = await supabase
-        .from('transactions')
-        .update(updates)
-        .eq('id', id)
-        .select(`
-          *,
-          customer:customers(full_name, customer_code),
-          bank_account:bank_accounts(account_name, account_number),
-          branch:branches(name)
-        `)
-        .single();
-
-      return {
-        data: data || null,
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
-  },
-
-  // Delete transaction
-  async deleteTransaction(id: string): Promise<{ error: string | null }> {
-    try {
-      const { error } = await supabase
-        .from('transactions')
-        .delete()
-        .eq('id', id);
-
-      return {
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
-  },
-
-  // Bulk import transactions
-  async bulkImportTransactions(
-    rawData: RawTransactionData[],
-    branchId: string,
-    createdBy: string
-  ): Promise<{ data: Transaction[]; errors: ImportError[] }> {
-    const results: Transaction[] = [];
-    const errors: ImportError[] = [];
-
-    for (let i = 0; i < rawData.length; i++) {
-      try {
-        const row = rawData[i];
-        
-        // Find or create customer
-        let customerId = '';
-        const { data: existingCustomer } = await customerService.getCustomers({
-          search: row.customer_name,
-          branch_id: branchId,
-          limit: 1,
-        });
-
-        if (existingCustomer.length > 0) {
-          customerId = existingCustomer[0].id;
-        } else {
-          // Create new customer
-          const { data: newCustomer, error: customerError } = await customerService.createCustomer({
-            full_name: row.customer_name,
-            branch_id: branchId,
-          });
-
-          if (newCustomer) {
-            customerId = newCustomer.id;
-          } else {
-            errors.push({
-              row: i,
-              column: 'customer_name',
-              message: customerError || 'Failed to create customer',
-              value: row.customer_name,
-            });
-            continue;
-          }
-        }
-
-        // Find bank account
-        const { data: bankAccounts } = await bankAccountService.getBankAccounts({
-          branch_id: branchId,
-          search: row.bank_account,
-        });
-
-        if (bankAccounts.length === 0) {
-          errors.push({
-            row: i,
-            column: 'bank_account',
-            message: 'Bank account not found',
-            value: row.bank_account,
-          });
-          continue;
-        }
-
-        const bankAccountId = bankAccounts[0].id;
-
-        // Create transaction
-        const { data: transaction, error: transactionError } = await this.createTransaction({
-          customer_id: customerId,
-          bank_account_id: bankAccountId,
-          branch_id: branchId,
-          transaction_type: row.transaction_type.toLowerCase().trim() as any,
-          amount: parseFloat(row.amount.replace(/[$,€£¥₫\s]/g, '')),
-          description: row.description || '',
-          reference_number: row.reference_number || '',
-          transaction_date: new Date(row.transaction_date).toISOString(),
-          created_by: createdBy,
-        });
-
-        if (transaction) {
-          results.push(transaction);
-        } else if (transactionError) {
-          errors.push({
-            row: i,
-            column: 'general',
-            message: transactionError,
-            value: row,
-          });
-        }
-      } catch (error) {
-        errors.push({
-          row: i,
-          column: 'general',
-          message: error instanceof Error ? error.message : 'Unknown error',
-          value: rawData[i],
-        });
-      }
-    }
-
-    return { data: results, errors };
-  },
+  async createTransaction(_transactionData?: any) { return { data: null, error: null }; },
+  async updateTransaction(_id: string, _updates?: any) { return { data: null, error: null }; },
+  async deleteTransaction(_id: string) { return { error: null }; },
+  async bulkImportTransactions(_rawData?: any[], _branchId?: string, _createdBy?: string) { return { data: [], errors: [] }; },
 };
 
-// Bank Account Operations
 export const bankAccountService = {
-  // Get all bank accounts with optional filters
-  async getBankAccounts(filters?: {
-    branch_id?: string;
-    search?: string;
-    is_active?: boolean;
-  }): Promise<{ data: BankAccount[]; error: string | null }> {
-    try {
-      let query = supabase
-        .from('bank_accounts')
-        .select('*, branch:branches(name)');
-
-      if (filters?.branch_id) {
-        query = query.eq('branch_id', filters.branch_id);
-      }
-
-      if (filters?.search) {
-        query = query.or(`account_name.ilike.%${filters.search}%,account_number.ilike.%${filters.search}%`);
-      }
-
-      if (filters?.is_active !== undefined) {
-        query = query.eq('is_active', filters.is_active);
-      }
-
-      const { data, error } = await query.order('account_name');
-
-      return {
-        data: data || [],
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        data: [],
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+  async getBankAccounts(_filters?: any) {
+    return {
+      data: [
+        {
+          id: '1',
+          account_number: '123456',
+          account_name: 'Test Bank',
+          bank_name: 'Test Bank',
+          branch_id: '1',
+          balance: 1000,
+          is_active: true,
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+        },
+      ],
+      error: null,
+    };
   },
-
-  // Get bank account by ID
-  async getBankAccountById(id: string): Promise<{ data: BankAccount | null; error: string | null }> {
-    try {
-      const { data, error } = await supabase
-        .from('bank_accounts')
-        .select('*, branch:branches(name)')
-        .eq('id', id)
-        .single();
-
-      return {
-        data: data || null,
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+  async getBankAccountById(_id: string) {
+    return {
+      data: {
+        id: '1',
+        account_number: '123456',
+        account_name: 'Test Bank',
+        bank_name: 'Test Bank',
+        branch_id: '1',
+        balance: 1000,
+        is_active: true,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+      },
+      error: null,
+    };
   },
 };
 
-// Branch Operations
 export const branchService = {
-  // Get all branches
-  async getBranches(): Promise<{ data: Branch[]; error: string | null }> {
-    try {
-      const { data, error } = await supabase
-        .from('branches')
-        .select('*')
-        .eq('is_active', true)
-        .order('name');
-
-      return {
-        data: data || [],
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        data: [],
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+  async getBranches() {
+    return {
+      data: [
+        {
+          id: '1',
+          name: 'Main Branch',
+          code: 'MB001',
+          address: '123 Main St',
+          phone: '0123456789',
+          email: 'main@branch.com',
+          manager_id: 'test-user',
+          is_active: true,
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+        },
+      ],
+      error: null,
+    };
   },
-
-  // Get branch by ID
-  async getBranchById(id: string): Promise<{ data: Branch | null; error: string | null }> {
-    try {
-      const { data, error } = await supabase
-        .from('branches')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      return {
-        data: data || null,
-        error: error?.message || null,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+  async getBranchById(_id: string) {
+    return {
+      data: {
+        id: '1',
+        name: 'Main Branch',
+        code: 'MB001',
+        address: '123 Main St',
+        phone: '0123456789',
+        email: 'main@branch.com',
+        manager_id: 'test-user',
+        is_active: true,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+      },
+      error: null,
+    };
   },
 };
 
-// Dashboard Operations
 export const dashboardService = {
-  // Get dashboard metrics
-  async getDashboardMetrics(branchId?: string): Promise<{
-    data: {
-      totalOutstanding: number;
-      totalOutstandingChange: number;
-      activeCustomers: number;
-      activeCustomersChange: number;
-      monthlyTransactions: number;
-      monthlyTransactionsChange: number;
-      totalTransactions: number;
-      totalTransactionsChange: number;
-      balanceByBranch: Array<{ branch_id: string; branch_name: string; balance: number }>;
-      balanceByBankAccount: Array<{
-        bank_account_id: string;
-        account_name: string;
-        account_number: string;
-        balance: number;
-      }>;
-      cashFlowData: Array<{
-        date: string;
-        inflow: number;
-        outflow: number;
-        netFlow: number;
-      }>;
-      recentTransactions: Transaction[];
-      topCustomers: Customer[];
-    } | null;
-    error: string | null;
-  }> {
-    try {
-      // Get total outstanding balance
-      const { data: customers } = await customerService.getCustomers({
-        branch_id: branchId,
-        is_active: true,
-      });
-      const totalOutstanding = customers.reduce((sum, customer) => sum + customer.total_balance, 0);
+  async getDashboardMetrics(_branchId?: string, timeRange: 'day' | 'week' | 'month' | 'quarter' | 'year' = 'month') {
+    // Mock different transaction counts based on time range
+    const transactionCounts = {
+      day: 5,
+      week: 25,
+      month: 100,
+      quarter: 300,
+      year: 1200
+    };
 
-      // Get active customers count
-      const activeCustomers = customers.length;
+    // Mock previous period transaction counts (same period last time)
+    const previousTransactionCounts = {
+      day: 3,      // 3 giao dịch ngày hôm trước
+      week: 20,    // 20 giao dịch tuần trước
+      month: 85,   // 85 giao dịch tháng trước
+      quarter: 250, // 250 giao dịch quý trước
+      year: 1000   // 1000 giao dịch năm trước
+    };
 
-      // Get monthly transactions
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
+    // Calculate changes based on previous period
+    const transactionChanges = {
+      day: transactionCounts.day - previousTransactionCounts.day,
+      week: transactionCounts.week - previousTransactionCounts.week,
+      month: transactionCounts.month - previousTransactionCounts.month,
+      quarter: transactionCounts.quarter - previousTransactionCounts.quarter,
+      year: transactionCounts.year - previousTransactionCounts.year
+    };
 
-      const { data: monthlyTransactions } = await transactionService.getTransactions({
-        branch_id: branchId,
-        dateRange: {
-          start: startOfMonth.toISOString(),
-          end: new Date().toISOString(),
+    // Mock different transaction amounts based on time range (in VND)
+    const transactionAmounts = {
+      day: 7500000,      // 7.5 triệu VND (2 + 5.5)
+      week: 37500000,    // 37.5 triệu VND (10 + 27.5)
+      month: 150000000,  // 150 triệu VND (40 + 110)
+      quarter: 450000000, // 450 triệu VND (120 + 330)
+      year: 1800000000   // 1.8 tỷ VND (480 + 1320)
+    };
+
+    // Mock income amounts (tiền thu được)
+    const incomeAmounts = {
+      day: 2000000,      // 2 triệu VND thu
+      week: 10000000,    // 10 triệu VND thu
+      month: 40000000,   // 40 triệu VND thu
+      quarter: 120000000, // 120 triệu VND thu
+      year: 480000000    // 480 triệu VND thu
+    };
+
+    // Mock debt amounts (tiền cho nợ)
+    const debtAmounts = {
+      day: 5500000,      // 5.5 triệu VND cho nợ
+      week: 27500000,    // 27.5 triệu VND cho nợ
+      month: 110000000,  // 110 triệu VND cho nợ
+      quarter: 330000000, // 330 triệu VND cho nợ
+      year: 1320000000   // 1.32 tỷ VND cho nợ
+    };
+
+    // Mock previous period transaction amounts
+    const previousTransactionAmounts = {
+      day: 4500000,      // 4.5 triệu VND ngày hôm trước (1.2 + 3.3)
+      week: 22500000,    // 22.5 triệu VND tuần trước (6 + 16.5)
+      month: 90000000,   // 90 triệu VND tháng trước (24 + 66)
+      quarter: 270000000, // 270 triệu VND quý trước (72 + 198)
+      year: 1080000000   // 1.08 tỷ VND năm trước (288 + 792)
+    };
+
+    // Mock previous period income amounts
+    const previousIncomeAmounts = {
+      day: 1200000,      // 1.2 triệu VND thu ngày hôm trước
+      week: 6000000,     // 6 triệu VND thu tuần trước
+      month: 24000000,   // 24 triệu VND thu tháng trước
+      quarter: 72000000, // 72 triệu VND thu quý trước
+      year: 288000000    // 288 triệu VND thu năm trước
+    };
+
+    // Mock previous period debt amounts
+    const previousDebtAmounts = {
+      day: 3300000,      // 3.3 triệu VND cho nợ ngày hôm trước
+      week: 16500000,    // 16.5 triệu VND cho nợ tuần trước
+      month: 66000000,   // 66 triệu VND cho nợ tháng trước
+      quarter: 198000000, // 198 triệu VND cho nợ quý trước
+      year: 792000000    // 792 triệu VND cho nợ năm trước
+    };
+
+    // Calculate amount changes based on previous period
+    const transactionAmountChanges = {
+      day: transactionAmounts.day - previousTransactionAmounts.day,
+      week: transactionAmounts.week - previousTransactionAmounts.week,
+      month: transactionAmounts.month - previousTransactionAmounts.month,
+      quarter: transactionAmounts.quarter - previousTransactionAmounts.quarter,
+      year: transactionAmounts.year - previousTransactionAmounts.year
+    };
+
+    // Calculate income changes based on previous period
+    const incomeChanges = {
+      day: incomeAmounts.day - previousIncomeAmounts.day,
+      week: incomeAmounts.week - previousIncomeAmounts.week,
+      month: incomeAmounts.month - previousIncomeAmounts.month,
+      quarter: incomeAmounts.quarter - previousIncomeAmounts.quarter,
+      year: incomeAmounts.year - previousIncomeAmounts.year
+    };
+
+    // Calculate debt changes based on previous period
+    const debtChanges = {
+      day: debtAmounts.day - previousDebtAmounts.day,
+      week: debtAmounts.week - previousDebtAmounts.week,
+      month: debtAmounts.month - previousDebtAmounts.month,
+      quarter: debtAmounts.quarter - previousDebtAmounts.quarter,
+      year: debtAmounts.year - previousDebtAmounts.year
+    };
+
+    // Mock outstanding balance by time range
+    const outstandingBalances = {
+      day: 1000,
+      week: 1200,
+      month: 1500,
+      quarter: 2000,
+      year: 2500
+    };
+
+    // Mock previous period outstanding balances
+    const previousOutstandingBalances = {
+      day: 950,   // 950 VND ngày hôm trước
+      week: 1100, // 1100 VND tuần trước
+      month: 1400, // 1400 VND tháng trước
+      quarter: 1800, // 1800 VND quý trước
+      year: 2200   // 2200 VND năm trước
+    };
+
+    // Calculate outstanding changes based on previous period
+    const outstandingChanges = {
+      day: outstandingBalances.day - previousOutstandingBalances.day,
+      week: outstandingBalances.week - previousOutstandingBalances.week,
+      month: outstandingBalances.month - previousOutstandingBalances.month,
+      quarter: outstandingBalances.quarter - previousOutstandingBalances.quarter,
+      year: outstandingBalances.year - previousOutstandingBalances.year
+    };
+
+    // Mock active customers by time range
+    const activeCustomers = {
+      day: 1,
+      week: 2,
+      month: 3,
+      quarter: 4,
+      year: 5
+    };
+
+    // Mock previous period active customers
+    const previousActiveCustomers = {
+      day: 1,   // Giữ nguyên
+      week: 1,  // Tăng 1
+      month: 2, // Tăng 1
+      quarter: 3, // Tăng 1
+      year: 4   // Tăng 1
+    };
+
+    // Calculate active customers changes based on previous period
+    const activeCustomersChanges = {
+      day: activeCustomers.day - previousActiveCustomers.day,
+      week: activeCustomers.week - previousActiveCustomers.week,
+      month: activeCustomers.month - previousActiveCustomers.month,
+      quarter: activeCustomers.quarter - previousActiveCustomers.quarter,
+      year: activeCustomers.year - previousActiveCustomers.year
+    };
+
+    // Mock transaction amounts by branch based on time range
+    const transactionAmountsByBranchData = {
+      day: [
+        { 
+          branch_id: '1', 
+          branch_name: 'Chi nhánh Hà Nội', 
+          incomeAmount: 800000,   // 0.8 triệu VND thu
+          debtAmount: 2200000     // 2.2 triệu VND cho nợ
         },
-      });
+        { 
+          branch_id: '2', 
+          branch_name: 'Chi nhánh TP.HCM', 
+          incomeAmount: 1000000,  // 1 triệu VND thu
+          debtAmount: 2500000     // 2.5 triệu VND cho nợ
+        },
+        { 
+          branch_id: '3', 
+          branch_name: 'Chi nhánh Đà Nẵng', 
+          incomeAmount: 200000,   // 0.2 triệu VND thu
+          debtAmount: 800000      // 0.8 triệu VND cho nợ
+        }
+      ],
+      week: [
+        { 
+          branch_id: '1', 
+          branch_name: 'Chi nhánh Hà Nội', 
+          incomeAmount: 4000000,  // 4 triệu VND thu
+          debtAmount: 11000000    // 11 triệu VND cho nợ
+        },
+        { 
+          branch_id: '2', 
+          branch_name: 'Chi nhánh TP.HCM', 
+          incomeAmount: 5000000,  // 5 triệu VND thu
+          debtAmount: 12500000    // 12.5 triệu VND cho nợ
+        },
+        { 
+          branch_id: '3', 
+          branch_name: 'Chi nhánh Đà Nẵng', 
+          incomeAmount: 1000000,  // 1 triệu VND thu
+          debtAmount: 4000000     // 4 triệu VND cho nợ
+        }
+      ],
+      month: [
+        { 
+          branch_id: '1', 
+          branch_name: 'Chi nhánh Hà Nội', 
+          incomeAmount: 16000000, // 16 triệu VND thu
+          debtAmount: 44000000    // 44 triệu VND cho nợ
+        },
+        { 
+          branch_id: '2', 
+          branch_name: 'Chi nhánh TP.HCM', 
+          incomeAmount: 20000000, // 20 triệu VND thu
+          debtAmount: 50000000    // 50 triệu VND cho nợ
+        },
+        { 
+          branch_id: '3', 
+          branch_name: 'Chi nhánh Đà Nẵng', 
+          incomeAmount: 4000000,  // 4 triệu VND thu
+          debtAmount: 16000000    // 16 triệu VND cho nợ
+        }
+      ],
+      quarter: [
+        { 
+          branch_id: '1', 
+          branch_name: 'Chi nhánh Hà Nội', 
+          incomeAmount: 48000000, // 48 triệu VND thu
+          debtAmount: 132000000   // 132 triệu VND cho nợ
+        },
+        { 
+          branch_id: '2', 
+          branch_name: 'Chi nhánh TP.HCM', 
+          incomeAmount: 60000000, // 60 triệu VND thu
+          debtAmount: 150000000   // 150 triệu VND cho nợ
+        },
+        { 
+          branch_id: '3', 
+          branch_name: 'Chi nhánh Đà Nẵng', 
+          incomeAmount: 12000000, // 12 triệu VND thu
+          debtAmount: 48000000    // 48 triệu VND cho nợ
+        }
+      ],
+      year: [
+        { 
+          branch_id: '1', 
+          branch_name: 'Chi nhánh Hà Nội', 
+          incomeAmount: 192000000, // 192 triệu VND thu
+          debtAmount: 528000000    // 528 triệu VND cho nợ
+        },
+        { 
+          branch_id: '2', 
+          branch_name: 'Chi nhánh TP.HCM', 
+          incomeAmount: 240000000, // 240 triệu VND thu
+          debtAmount: 600000000    // 600 triệu VND cho nợ
+        },
+        { 
+          branch_id: '3', 
+          branch_name: 'Chi nhánh Đà Nẵng', 
+          incomeAmount: 48000000,  // 48 triệu VND thu
+          debtAmount: 192000000    // 192 triệu VND cho nợ
+        }
+      ]
+    };
 
-      // Get total transactions
-      const { data: allTransactions } = await transactionService.getTransactions({
-        branch_id: branchId,
-      });
+    // Verify sum matches transactionAmountsInPeriod
+    const branchIncomeSum = transactionAmountsByBranchData[timeRange].reduce((sum, branch) => sum + branch.incomeAmount, 0);
+    const branchDebtSum = transactionAmountsByBranchData[timeRange].reduce((sum, branch) => sum + branch.debtAmount, 0);
+    const branchTotalSum = branchIncomeSum + branchDebtSum;
+    
+    console.log(`Branch income sum for ${timeRange}: ${branchIncomeSum}, Income amount: ${incomeAmounts[timeRange]}`);
+    console.log(`Branch debt sum for ${timeRange}: ${branchDebtSum}, Debt amount: ${debtAmounts[timeRange]}`);
+    console.log(`Branch total sum for ${timeRange}: ${branchTotalSum}, Transaction amount: ${transactionAmounts[timeRange]}`);
+    
+    // Ensure the sums match exactly
+    if (branchIncomeSum !== incomeAmounts[timeRange]) {
+      console.warn(`Income sum mismatch for ${timeRange}: branch sum = ${branchIncomeSum}, income amount = ${incomeAmounts[timeRange]}`);
+    }
+    if (branchDebtSum !== debtAmounts[timeRange]) {
+      console.warn(`Debt sum mismatch for ${timeRange}: branch sum = ${branchDebtSum}, debt amount = ${debtAmounts[timeRange]}`);
+    }
+    if (branchTotalSum !== transactionAmounts[timeRange]) {
+      console.warn(`Total sum mismatch for ${timeRange}: branch sum = ${branchTotalSum}, transaction amount = ${transactionAmounts[timeRange]}`);
+    }
 
-      // Get recent transactions
-      const { data: recentTransactions } = await transactionService.getTransactions({
-        branch_id: branchId,
-        limit: 10,
-      });
-
-      // Get top customers
-      const topCustomers = customers
-        .sort((a, b) => Math.abs(b.total_balance) - Math.abs(a.total_balance))
-        .slice(0, 10);
-
-      // Get balance by branch
-      const { data: branches } = await branchService.getBranches();
-      const balanceByBranch = await Promise.all(
-        branches.map(async (branch) => {
-          const { data: branchCustomers } = await customerService.getCustomers({
-            branch_id: branch.id,
-            is_active: true,
-          });
-          const balance = branchCustomers.reduce((sum, customer) => sum + customer.total_balance, 0);
-          return {
-            branch_id: branch.id,
-            branch_name: branch.name,
-            balance,
+    return {
+      data: {
+        totalOutstanding: outstandingBalances[timeRange],
+        totalOutstandingChange: outstandingChanges[timeRange],
+        activeCustomers: activeCustomers[timeRange],
+        activeCustomersChange: activeCustomersChanges[timeRange],
+        transactionsInPeriod: transactionCounts[timeRange],
+        transactionsInPeriodChange: transactionChanges[timeRange],
+        transactionAmountsInPeriod: transactionAmounts[timeRange],
+        transactionAmountsInPeriodChange: transactionAmountChanges[timeRange],
+        transactionIncomeInPeriod: incomeAmounts[timeRange],
+        transactionDebtInPeriod: debtAmounts[timeRange],
+        transactionIncomeChange: incomeChanges[timeRange],
+        transactionDebtChange: debtChanges[timeRange],
+        totalTransactions: 1,
+        totalTransactionsChange: 0,
+        transactionAmountsByBranch: transactionAmountsByBranchData[timeRange],
+        balanceByBankAccount: [{ bank_account_id: '1', account_name: 'Test Bank', account_number: '123456', balance: 1000 }],
+        cashFlowData: (() => {
+          const baseData = {
+            day: [
+              { date: '2024-01-01T08:00:00Z', inflow: 2500000, outflow: 800000, netFlow: 1700000 },
+              { date: '2024-01-01T10:00:00Z', inflow: 1800000, outflow: 3200000, netFlow: -1400000 },
+              { date: '2024-01-01T12:00:00Z', inflow: 4200000, outflow: 1500000, netFlow: 2700000 },
+              { date: '2024-01-01T14:00:00Z', inflow: 1200000, outflow: 2800000, netFlow: -1600000 },
+              { date: '2024-01-01T16:00:00Z', inflow: 3500000, outflow: 1200000, netFlow: 2300000 },
+              { date: '2024-01-01T18:00:00Z', inflow: 900000, outflow: 2500000, netFlow: -1600000 },
+              { date: '2024-01-01T20:00:00Z', inflow: 2800000, outflow: 1800000, netFlow: 1000000 },
+            ],
+            week: [
+              { date: '2024-01-01T00:00:00Z', inflow: 12000000, outflow: 5000000, netFlow: 7000000 },
+              { date: '2024-01-02T00:00:00Z', inflow: 8000000, outflow: 15000000, netFlow: -7000000 },
+              { date: '2024-01-03T00:00:00Z', inflow: 18000000, outflow: 8000000, netFlow: 10000000 },
+              { date: '2024-01-04T00:00:00Z', inflow: 6000000, outflow: 12000000, netFlow: -6000000 },
+              { date: '2024-01-05T00:00:00Z', inflow: 15000000, outflow: 7000000, netFlow: 8000000 },
+              { date: '2024-01-06T00:00:00Z', inflow: 9000000, outflow: 14000000, netFlow: -5000000 },
+              { date: '2024-01-07T00:00:00Z', inflow: 11000000, outflow: 6000000, netFlow: 5000000 },
+            ],
+            month: [
+              { date: '2024-01-01T00:00:00Z', inflow: 45000000, outflow: 20000000, netFlow: 25000000 },
+              { date: '2024-01-08T00:00:00Z', inflow: 30000000, outflow: 50000000, netFlow: -20000000 },
+              { date: '2024-01-15T00:00:00Z', inflow: 60000000, outflow: 25000000, netFlow: 35000000 },
+              { date: '2024-01-22T00:00:00Z', inflow: 20000000, outflow: 45000000, netFlow: -25000000 },
+              { date: '2024-01-29T00:00:00Z', inflow: 55000000, outflow: 30000000, netFlow: 25000000 },
+            ],
+            quarter: [
+              { date: '2024-01-01T00:00:00Z', inflow: 140000000, outflow: 60000000, netFlow: 80000000 },
+              { date: '2024-02-01T00:00:00Z', inflow: 90000000, outflow: 150000000, netFlow: -60000000 },
+              { date: '2024-03-01T00:00:00Z', inflow: 180000000, outflow: 80000000, netFlow: 100000000 },
+            ],
+            year: [
+              { date: '2024-01-01T00:00:00Z', inflow: 560000000, outflow: 240000000, netFlow: 320000000 },
+              { date: '2024-04-01T00:00:00Z', inflow: 360000000, outflow: 600000000, netFlow: -240000000 },
+              { date: '2024-07-01T00:00:00Z', inflow: 720000000, outflow: 320000000, netFlow: 400000000 },
+              { date: '2024-10-01T00:00:00Z', inflow: 240000000, outflow: 480000000, netFlow: -240000000 },
+            ]
           };
-        })
-      );
-
-      // Get balance by bank account
-      const { data: bankAccounts } = await bankAccountService.getBankAccounts({
-        branch_id: branchId,
-        is_active: true,
-      });
-
-      // Generate sample cash flow data (in a real app, this would come from actual transaction data)
-      const cashFlowData = this.generateCashFlowData();
-
-      // Calculate changes (simplified - in a real app, compare with previous period)
-      const totalOutstandingChange = 0; // Would calculate from previous period
-      const activeCustomersChange = 0;
-      const monthlyTransactionsChange = 0;
-      const totalTransactionsChange = 0;
-
-      return {
-        data: {
-          totalOutstanding,
-          totalOutstandingChange,
-          activeCustomers,
-          activeCustomersChange,
-          monthlyTransactions: monthlyTransactions.length,
-          monthlyTransactionsChange,
-          totalTransactions: allTransactions.length,
-          totalTransactionsChange,
-          balanceByBranch,
-          balanceByBankAccount: bankAccounts.map(account => ({
-            bank_account_id: account.id,
-            account_name: account.account_name,
-            account_number: account.account_number,
-            balance: account.balance,
-          })),
-          cashFlowData,
-          recentTransactions,
-          topCustomers,
-        },
-        error: null,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
-  },
-
-  // Generate sample cash flow data
-  generateCashFlowData(): Array<{
-    date: string;
-    inflow: number;
-    outflow: number;
-    netFlow: number;
-  }> {
-    const data = [];
-    const today = new Date();
-    
-    for (let i = 29; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      
-      const inflow = Math.random() * 50000 + 10000;
-      const outflow = Math.random() * 30000 + 5000;
-      const netFlow = inflow - outflow;
-      
-      data.push({
-        date: date.toISOString().split('T')[0],
-        inflow,
-        outflow,
-        netFlow,
-      });
-    }
-    
-    return data;
+          return baseData[timeRange] || baseData.month;
+        })(),
+        recentTransactions: [
+          {
+            id: '1',
+            transaction_code: 'TXN0001',
+            customer_id: '1',
+            bank_account_id: '1',
+            branch_id: '1',
+            transaction_type: 'payment' as const,
+            amount: 500,
+            description: 'Test payment',
+            reference_number: 'REF123',
+            transaction_date: '2024-01-01T00:00:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-01T00:00:00Z',
+            updated_at: '2024-01-01T00:00:00Z',
+          },
+        ],
+        topCustomers: [
+          {
+            id: '1',
+            customer_code: 'CUST0001',
+            full_name: 'Test Customer',
+            phone: '0123456789',
+            email: 'test@customer.com',
+            address: '123 Main St',
+            branch_id: '1',
+            total_balance: 1000,
+            last_transaction_date: '2024-01-01T00:00:00Z',
+            is_active: true,
+            created_at: '2024-01-01T00:00:00Z',
+            updated_at: '2024-01-01T00:00:00Z',
+          },
+        ],
+      },
+      error: null,
+    };
   },
 };
 

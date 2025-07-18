@@ -1,13 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from 'recharts';
 import { formatCurrency } from '../../../utils/formatting';
 import { TimeRange } from '../Dashboard';
@@ -35,35 +36,101 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data, timeRange }) => {
     );
   }
 
+  // Transform data for waterfall chart
+  const waterfallData = data.map((item, index) => {
+    const total = Math.abs(item.inflow) + Math.abs(item.outflow);
+    const inflowPercentage = total > 0 ? (Math.abs(item.inflow) / total) * 100 : 0;
+    const outflowPercentage = total > 0 ? (Math.abs(item.outflow) / total) * 100 : 0;
+    
+    return [
+      {
+        name: `${item.date}_inflow`,
+        value: item.inflow,
+        percentage: inflowPercentage,
+        type: 'inflow',
+        date: item.date,
+        fill: '#10B981',
+        stroke: '#059669',
+      },
+      {
+        name: `${item.date}_outflow`,
+        value: -Math.abs(item.outflow), // Negative for outflow
+        percentage: outflowPercentage,
+        type: 'outflow',
+        date: item.date,
+        fill: '#EF4444',
+        stroke: '#DC2626',
+      }
+    ];
+  }).flat();
+
   // Custom tooltip
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      const inflow = payload.find((p: any) => p.dataKey === 'inflow')?.value || 0;
-      const outflow = payload.find((p: any) => p.dataKey === 'outflow')?.value || 0;
-      const netFlow = payload.find((p: any) => p.dataKey === 'netFlow')?.value || 0;
-
+      const data = payload[0].payload;
       return (
         <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="text-sm font-medium text-gray-900">{label}</p>
+          <p className="text-sm font-medium text-gray-900">
+            {formatDate(data.date)} - {data.type === 'inflow' ? t('dashboard.inflow') : t('dashboard.outflow')}
+          </p>
           <div className="space-y-1 mt-2">
-            <p className="text-xs text-green-600">
-              {t('dashboard.inflow')}: {formatCurrency(inflow)}
+            <p className={`text-sm font-bold ${data.type === 'inflow' ? 'text-green-600' : 'text-red-600'}`}>
+              {formatCurrency(Math.abs(data.value))}
             </p>
-            <p className="text-xs text-red-600">
-              {t('dashboard.outflow')}: {formatCurrency(outflow)}
-            </p>
-            <p
-              className={`text-sm font-bold ${
-                netFlow >= 0 ? 'text-green-600' : 'text-red-600'
-              }`}
-            >
-              {t('dashboard.netFlow')}: {formatCurrency(netFlow)}
+            <p className="text-xs text-gray-600">
+              {data.percentage.toFixed(1)}% {t('dashboard.ofTotal')}
             </p>
           </div>
         </div>
       );
     }
     return null;
+  };
+
+  // Custom bar with labels
+  const CustomBar = (props: any) => {
+    const { x, y, width, height, value, percentage, type } = props;
+    const isPositive = value >= 0;
+    const absValue = Math.abs(value);
+    
+    return (
+      <g>
+        {/* Bar */}
+        <rect
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          fill={type === 'inflow' ? '#10B981' : '#EF4444'}
+          stroke={type === 'inflow' ? '#059669' : '#DC2626'}
+          strokeWidth={1}
+        />
+        
+        {/* Amount label inside bar */}
+        <text
+          x={x + width / 2}
+          y={y + height / 2}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          className="text-xs font-medium fill-white"
+          style={{ fontSize: '10px', fontWeight: '500' }}
+        >
+          {formatCurrency(absValue)}
+        </text>
+        
+        {/* Percentage label outside bar */}
+        <text
+          x={x + width / 2}
+          y={isPositive ? y - 8 : y + height + 16}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          className="text-xs text-gray-600"
+          style={{ fontSize: '10px' }}
+        >
+          {percentage.toFixed(1)}%
+        </text>
+      </g>
+    );
   };
 
   // Format date based on time range
@@ -86,56 +153,38 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data, timeRange }) => {
   };
 
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-56">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <BarChart 
+          data={waterfallData} 
+          margin={{ top: 40, right: 30, left: 20, bottom: 60 }}
+          barGap={0}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
           <XAxis
-            dataKey="date"
+            dataKey="name"
             tick={{ fontSize: 12 }}
-            tickFormatter={formatDate}
+            tickFormatter={(value) => {
+              const date = value.split('_')[0];
+              const type = value.split('_')[1];
+              return `${formatDate(date)} ${type === 'inflow' ? '↑' : '↓'}`;
+            }}
             angle={-45}
             textAnchor="end"
             height={80}
           />
           <YAxis
             tick={{ fontSize: 12 }}
-            tickFormatter={(value) => formatCurrency(value)}
+            tickFormatter={(value) => formatCurrency(Math.abs(value))}
           />
           <Tooltip content={<CustomTooltip />} />
           
-          {/* Inflow Area */}
-          <Area
-            type="monotone"
-            dataKey="inflow"
-            stackId="1"
-            stroke="#10B981"
-            fill="#10B981"
-            fillOpacity={0.6}
-            name={t('dashboard.inflow')}
+          <Bar
+            dataKey="value"
+            shape={<CustomBar />}
+            radius={[2, 2, 0, 0]}
           />
-          
-          {/* Outflow Area (negative values) */}
-          <Area
-            type="monotone"
-            dataKey="outflow"
-            stackId="1"
-            stroke="#EF4444"
-            fill="#EF4444"
-            fillOpacity={0.6}
-            name={t('dashboard.outflow')}
-          />
-          
-          {/* Net Flow Line */}
-          <Area
-            type="monotone"
-            dataKey="netFlow"
-            stroke="#3B82F6"
-            strokeWidth={2}
-            fill="none"
-            name={t('dashboard.netFlow')}
-          />
-        </AreaChart>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

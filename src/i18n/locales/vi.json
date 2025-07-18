@@ -44,6 +44,9 @@
     "light": "Sáng",
     "system": "Hệ thống"
   },
+  "app": {
+    "title": "Quản lý Công nợ"
+  },
   "navigation": {
     "dashboard": "Bảng điều khiển",
     "customers": "Khách hàng",
@@ -72,28 +75,48 @@
   },
   "dashboard": {
     "title": "Bảng điều khiển",
-    "overview": "Tổng quan",
-    "totalOutstanding": "Tổng số dư nợ",
-    "activeCustomers": "Khách hàng hoạt động",
-    "monthlyTransactions": "Giao dịch tháng",
-    "totalTransactions": "Tổng giao dịch",
-    "balanceByBranch": "Số dư theo chi nhánh",
-    "recentTransactions": "Giao dịch gần đây",
-    "topCustomers": "Khách hàng hàng đầu",
-    "cashFlow": "Dòng tiền",
-    "periodComparison": "So sánh kỳ",
-    "thisMonth": "Tháng này",
-    "lastMonth": "Tháng trước",
-    "thisYear": "Năm nay",
-    "lastYear": "Năm trước",
-    "day": "Ngày",
-    "week": "Tuần",
-    "month": "Tháng",
-    "quarter": "Quý",
-    "year": "Năm",
+    "subtitle": "Tổng quan về tình hình công nợ và giao dịch",
+    "loading": "Đang tải...",
+    "loadingData": "Đang tải dữ liệu bảng điều khiển",
+    "error": "Lỗi",
     "noData": "Không có dữ liệu",
-    "loadingMetrics": "Đang tải số liệu...",
-    "errorLoadingMetrics": "Lỗi tải số liệu"
+    "noDataDescription": "Không có dữ liệu để hiển thị",
+    "totalOutstanding": "Tổng công nợ",
+    "activeCustomers": "Khách hàng hoạt động",
+    "transactionsInPeriod": "Giao dịch trong {{period}}",
+    "transactionAmountsInPeriod": "Số tiền giao dịch trong {{period}}",
+    "totalTransactions": "Tổng giao dịch",
+    "balanceByBank": "Số dư theo tài khoản ngân hàng",
+    "balanceByBankDescription": "Phân bổ số dư theo từng tài khoản ngân hàng",
+    "cashFlow": "Dòng tiền",
+    "cashFlowDescription": "Biểu đồ dòng tiền ra vào theo thời gian",
+    "balanceByBranch": "Giao dịch tiền ra vào theo chi nhánh",
+    "balanceByBranchDescription": "Tổng hợp giao dịch tiền ra vào của từng chi nhánh",
+    "recentTransactions": "Giao dịch gần đây",
+    "recentTransactionsDescription": "Danh sách các giao dịch mới nhất",
+    "topCustomers": "Khách hàng hàng đầu",
+    "topCustomersDescription": "Danh sách khách hàng có số dư cao nhất",
+    "totalBalance": "Tổng số tiền giao dịch",
+    "totalIncome": "Tổng thu",
+    "totalDebt": "Tổng cho nợ",
+    "totalTransactionAmount": "Tổng số tiền giao dịch",
+    "noTransactions": "Không có giao dịch nào",
+    "noCustomers": "Không có khách hàng nào",
+    "customerId": "Khách hàng #{{id}}",
+    "accountId": "Tài khoản #{{id}}",
+    "lastTransaction": "Giao dịch cuối",
+    "showingFirstN": "Hiển thị {{count}}/{{total}}",
+    "timeRange": {
+      "day": "Ngày",
+      "week": "Tuần", 
+      "month": "Tháng",
+      "quarter": "Quý",
+      "year": "Năm"
+    },
+    "inflow": "Tiền vào",
+    "outflow": "Tiền ra",
+    "netFlow": "Dòng tiền ròng",
+    "ofTotal": "của tổng"
   },
   "customers": {
     "title": "Khách hàng",
@@ -108,7 +131,7 @@
     "email": "Email",
     "address": "Địa chỉ",
     "branch": "Chi nhánh",
-    "totalBalance": "Tổng số dư",
+    "totalBalance": "Tổng số tiền giao dịch",
     "lastTransaction": "Giao dịch cuối",
     "isActive": "Hoạt động",
     "createdAt": "Ngày tạo",
@@ -135,7 +158,7 @@
     "noCustomers": "Không có khách hàng nào",
     "noCustomersDescription": "Nhập khách hàng hoặc thêm thủ công",
     "showingResults": "Hiển thị {{start}} đến {{end}} trong tổng số {{total}} khách hàng",
-    "filters": "Bộ lọc",
+    "filters": "Bộ lọc khách hàng",
     "suggestions": {
       "customer": "Khách hàng",
       "phone": "Số điện thoại",
@@ -270,6 +293,7 @@
     "transactionImport": "Nhập giao dịch",
     "transactionImportDescription": "Nhập dữ liệu giao dịch từ Google Sheets hoặc tệp Excel",
     "customerImport": "Nhập khách hàng",
+    "customerImportDescription": "Nhập thông tin khách hàng từ Google Sheets hoặc tệp Excel",
     "uploadFile": "Tải lên tệp",
     "dragAndDrop": "Kéo và thả tệp vào đây, hoặc nhấp để chọn",
     "supportedFormats": "Định dạng hỗ trợ: Excel (.xlsx, .xls), CSV",
@@ -353,7 +377,7 @@
       "description": "Tổng quan các chỉ số quan trọng của hệ thống",
       "totalOutstanding": "Tổng số dư nợ",
       "activeCustomers": "Khách hàng hoạt động",
-      "monthlyTransactions": "Giao dịch tháng",
+      "transactionsInPeriod": "Giao dịch trong {{period}}",
       "totalTransactions": "Tổng giao dịch"
     },
     "customerBalance": {
@@ -646,5 +670,13 @@
     "accountCreated": "Tạo tài khoản thành công",
     "accountUpdated": "Cập nhật tài khoản thành công",
     "accountDeleted": "Xóa tài khoản thành công"
+  },
+  "transactions": {
+    "types": {
+      "payment": "Thanh toán",
+      "charge": "Thu nợ",
+      "adjustment": "Điều chỉnh",
+      "refund": "Hoàn tiền"
+    }
   }
 } 

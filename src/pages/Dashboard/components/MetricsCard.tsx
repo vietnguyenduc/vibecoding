@@ -8,6 +8,13 @@ interface MetricsCardProps {
   changeType?: 'increase' | 'decrease';
   icon: 'currency' | 'users' | 'chart' | 'database';
   color: 'primary' | 'success' | 'warning' | 'info';
+  // New props for dual value cards
+  dualValues?: {
+    income: string;
+    debt: string;
+    incomeChange?: number;
+    debtChange?: number;
+  };
 }
 
 const MetricsCard: React.FC<MetricsCardProps> = ({
@@ -17,6 +24,7 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
   changeType,
   icon,
   color,
+  dualValues,
 }) => {
   const getIcon = () => {
     switch (icon) {
@@ -87,18 +95,106 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
   const colorClasses = getColorClasses();
 
   return (
-    <div className={`${colorClasses.bg} rounded-lg p-6`}>
+    <div className={`${colorClasses.bg} rounded-lg p-4`}>
       <div className="flex items-center">
         <div className={`${colorClasses.icon} p-2 rounded-md bg-white`}>
           {getIcon()}
         </div>
-        <div className="ml-4 flex-1">
+        <div className="ml-3 flex-1">
           <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className={`text-2xl font-bold ${colorClasses.value}`}>{value}</p>
+          {dualValues ? (
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <p className="text-base font-bold text-green-600">
+                  Thu: {dualValues.income}
+                </p>
+                {dualValues.incomeChange !== undefined && (
+                  <div className="flex items-center">
+                    <span
+                      className={`text-xs font-medium ${
+                        dualValues.incomeChange >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}
+                    >
+                      {dualValues.incomeChange >= 0 ? '+' : ''}
+                      {typeof dualValues.incomeChange === 'number' && dualValues.incomeChange.toString().includes('.')
+                        ? formatCurrency(dualValues.incomeChange)
+                        : dualValues.incomeChange}
+                    </span>
+                    <svg
+                      className={`ml-1 w-3 h-3 ${
+                        dualValues.incomeChange >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      {dualValues.incomeChange >= 0 ? (
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
+                          clipRule="evenodd"
+                        />
+                      ) : (
+                        <path
+                          fillRule="evenodd"
+                          d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      )}
+                    </svg>
+                  </div>
+                )}
+              </div>
+              
+              <div className="border-t border-gray-200"></div>
+              
+              <div className="flex items-center justify-between">
+                <p className="text-base font-bold text-red-600">
+                  Cho nợ: {dualValues.debt}
+                </p>
+                {dualValues.debtChange !== undefined && (
+                  <div className="flex items-center">
+                    <span
+                      className={`text-xs font-medium ${
+                        dualValues.debtChange >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}
+                    >
+                      {dualValues.debtChange >= 0 ? '+' : ''}
+                      {typeof dualValues.debtChange === 'number' && dualValues.debtChange.toString().includes('.')
+                        ? formatCurrency(dualValues.debtChange)
+                        : dualValues.debtChange}
+                    </span>
+                    <svg
+                      className={`ml-1 w-3 h-3 ${
+                        dualValues.debtChange >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      {dualValues.debtChange >= 0 ? (
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
+                          clipRule="evenodd"
+                        />
+                      ) : (
+                        <path
+                          fillRule="evenodd"
+                          d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      )}
+                    </svg>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <p className={`text-xl font-bold ${colorClasses.value}`}>{value}</p>
+          )}
           {change !== undefined && (
             <div className="flex items-center mt-1">
               <span
-                className={`text-sm font-medium ${
+                className={`text-xs font-medium ${
                   changeType === 'increase' ? 'text-green-600' : 'text-red-600'
                 }`}
               >
@@ -108,7 +204,7 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
                   : change}
               </span>
               <svg
-                className={`ml-1 w-4 h-4 ${
+                className={`ml-1 w-3 h-3 ${
                   changeType === 'increase' ? 'text-green-600' : 'text-red-600'
                 }`}
                 fill="currentColor"

@@ -6,11 +6,13 @@ import { LoadingFallback } from '../../../components/UI/FallbackUI';
 interface ReportPreviewProps {
   reportData: any;
   loading?: boolean;
+  timeRange?: 'day' | 'week' | 'month' | 'quarter' | 'year';
 }
 
 const ReportPreview: React.FC<ReportPreviewProps> = ({
   reportData,
   loading = false,
+  timeRange = 'month',
 }) => {
   const { t } = useTranslation();
 
@@ -66,7 +68,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({
         
         <div className="bg-white p-6 rounded-lg border border-gray-200">
           <h3 className="text-sm font-medium text-gray-500 mb-2">
-            {t('reports.keyMetrics.monthlyTransactions')}
+            {t('reports.keyMetrics.transactionsInPeriod', { period: t(`dashboard.timeRange.${timeRange}`) })}
           </h3>
           <p className="text-2xl font-bold text-gray-900">
             {formatNumber(reportData.summary.monthlyTransactions)}

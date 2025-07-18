@@ -18,6 +18,7 @@ interface ReportsState {
   showExportModal: boolean;
   exportProgress: number;
   exportError: string | null;
+  timeRange: 'day' | 'week' | 'month' | 'quarter' | 'year';
 }
 
 const Reports: React.FC = () => {
@@ -41,6 +42,7 @@ const Reports: React.FC = () => {
     showExportModal: false,
     exportProgress: 0,
     exportError: null,
+    timeRange: 'month',
   });
 
   // Generate report data
@@ -434,6 +436,7 @@ const Reports: React.FC = () => {
                     <ReportPreview
                       reportData={state.reportData}
                       loading={state.loading}
+                      timeRange={state.timeRange}
                     />
                   </div>
                 )}

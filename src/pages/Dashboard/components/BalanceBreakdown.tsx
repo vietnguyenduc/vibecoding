@@ -2,14 +2,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency } from '../../../utils/formatting';
 
-interface BalanceByBranch {
+interface TransactionByBranch {
   branch_id: string;
   branch_name: string;
-  balance: number;
+  incomeAmount: number;
+  debtAmount: number;
 }
 
 interface BalanceBreakdownProps {
-  data: BalanceByBranch[];
+  data: TransactionByBranch[];
 }
 
 const BalanceBreakdown: React.FC<BalanceBreakdownProps> = ({ data }) => {
@@ -23,46 +24,68 @@ const BalanceBreakdown: React.FC<BalanceBreakdownProps> = ({ data }) => {
     );
   }
 
-  const totalBalance = data.reduce((sum, branch) => sum + branch.balance, 0);
+  const totalIncomeAmount = data.reduce((sum, branch) => sum + branch.incomeAmount, 0);
+  const totalDebtAmount = data.reduce((sum, branch) => sum + branch.debtAmount, 0);
+  const totalTransactionAmount = totalIncomeAmount + totalDebtAmount;
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {data.map((branch) => {
-          const percentage = totalBalance !== 0 ? (branch.balance / totalBalance) * 100 : 0;
-          const isPositive = branch.balance >= 0;
+          const incomePercentage = totalTransactionAmount !== 0 ? (branch.incomeAmount / totalTransactionAmount) * 100 : 0;
+          const debtPercentage = totalTransactionAmount !== 0 ? (branch.debtAmount / totalTransactionAmount) * 100 : 0;
 
           return (
             <div
               key={branch.branch_id}
-              className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+              className="bg-gray-50 rounded-lg p-3 border border-gray-200"
             >
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-sm font-medium text-gray-900 truncate">
                   {branch.branch_name}
                 </h4>
                 <span className="text-xs text-gray-500">
-                  {percentage.toFixed(1)}%
+                  {(incomePercentage + debtPercentage).toFixed(1)}%
                 </span>
               </div>
               
-              <div className="flex items-center justify-between">
-                <span
-                  className={`text-lg font-bold ${
-                    isPositive ? 'text-green-600' : 'text-red-600'
-                  }`}
-                >
-                  {formatCurrency(branch.balance)}
-                </span>
-                
+              {/* Income Section */}
+              <div className="mb-1">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-green-600 font-medium">Thu:</span>
+                  <span className="text-xs text-green-600 font-bold">
+                    {formatCurrency(branch.incomeAmount)}
+                  </span>
+                </div>
                 <div className="flex items-center">
-                  <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
                     <div
-                      className={`h-full ${
-                        isPositive ? 'bg-green-500' : 'bg-red-500'
-                      }`}
+                      className="h-full bg-green-500"
                       style={{
-                        width: `${Math.min(Math.abs(percentage), 100)}%`,
+                        width: `${Math.min(incomePercentage, 100)}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Separator */}
+              <div className="border-t border-gray-200 my-1"></div>
+
+              {/* Debt Section */}
+              <div className="mb-1">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-red-600 font-medium">Cho nợ:</span>
+                  <span className="text-xs text-red-600 font-bold">
+                    {formatCurrency(branch.debtAmount)}
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-red-500"
+                      style={{
+                        width: `${Math.min(debtPercentage, 100)}%`,
                       }}
                     />
                   </div>
@@ -71,21 +94,6 @@ const BalanceBreakdown: React.FC<BalanceBreakdownProps> = ({ data }) => {
             </div>
           );
         })}
-      </div>
-
-      <div className="mt-6 pt-4 border-t border-gray-200">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">
-            {t('dashboard.totalBalance')}
-          </span>
-          <span
-            className={`text-lg font-bold ${
-              totalBalance >= 0 ? 'text-green-600' : 'text-red-600'
-            }`}
-          >
-            {formatCurrency(totalBalance)}
-          </span>
-        </div>
       </div>
     </div>
   );

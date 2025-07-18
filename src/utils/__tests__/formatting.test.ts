@@ -21,23 +21,24 @@ import {
 
 describe('Formatting Utils', () => {
   describe('formatCurrency', () => {
-    it('formats USD currency correctly', () => {
-      expect(formatCurrency(1234.56)).toBe('$1,234.56');
-      expect(formatCurrency(0)).toBe('$0.00');
-      expect(formatCurrency(-1234.56)).toBe('-$1,234.56');
-      expect(formatCurrency(1000000)).toBe('$1,000,000.00');
+    it('should format currency correctly', () => {
+      expect(formatCurrency(1234.56)).toMatch(/^1\.235\s*₫$/);
+      expect(formatCurrency(0)).toMatch(/^0\s*₫$/);
+      expect(formatCurrency(-1234.56)).toMatch(/^-1\.235\s*₫$/);
+      expect(formatCurrency(1000000)).toMatch(/^1\.000\.000\s*₫$/);
     });
 
-    it('formats other currencies correctly', () => {
-      expect(formatCurrency(1234.56, 'EUR')).toBe('€1,234.56');
-      expect(formatCurrency(1234.56, 'GBP')).toBe('£1,234.56');
-      expect(formatCurrency(1234.56, 'JPY')).toBe('¥1,235');
+    it('should format different currencies', () => {
+      expect(formatCurrency(1234.56, 'USD')).toMatch(/^1\.235\s*US\$$/);
+      expect(formatCurrency(1234.56, 'EUR')).toMatch(/^1\.235\s*€$/);
+      expect(formatCurrency(1234.56, 'GBP')).toMatch(/^1\.235\s*£$/);
+      expect(formatCurrency(1234.56, 'JPY')).toMatch(/^1\.235\s*¥$/);
     });
 
-    it('handles edge cases', () => {
-      expect(formatCurrency(NaN)).toBe('$NaN');
-      expect(formatCurrency(Infinity)).toBe('$∞');
-      expect(formatCurrency(-Infinity)).toBe('$-∞');
+    it('should handle edge cases', () => {
+      expect(formatCurrency(NaN)).toMatch(/^NaN\s*₫$/);
+      expect(formatCurrency(Infinity)).toMatch(/^∞\s*₫$/);
+      expect(formatCurrency(-Infinity)).toMatch(/^-∞\s*₫$/);
     });
   });
 
@@ -260,13 +261,13 @@ describe('Formatting Utils', () => {
 
   describe('formatTableCell', () => {
     it('formats different cell types correctly', () => {
-      expect(formatTableCell(1234.56, 'currency')).toBe('$1,234.56');
+      expect(formatTableCell(1234.56, 'currency')).toMatch(/^1\.235\s*₫$/);
       expect(formatTableCell(1234, 'number')).toBe('1,234');
       expect(formatTableCell('2024-01-15', 'date')).toBe('Jan 15, 2024');
       expect(formatTableCell('1234567890', 'phone')).toBe('(123) 456-7890');
+      expect(formatTableCell(true, 'status')).toBe('Active');
       expect(formatTableCell('payment', 'type')).toBe('Payment');
       expect(formatTableCell('admin', 'role')).toBe('Administrator');
-      expect(formatTableCell(true, 'status')).toBe('Active');
     });
 
     it('handles null and undefined values', () => {
@@ -287,15 +288,15 @@ describe('Formatting Utils', () => {
           name: 'John Doe',
           amount: 1234.56,
           date: '2024-01-15',
-          status: true,
-        },
+          status: true
+        }
       ];
 
       const columns = [
         { key: 'name', label: 'Name' },
         { key: 'amount', label: 'Amount', type: 'currency' },
         { key: 'date', label: 'Date', type: 'date' },
-        { key: 'status', label: 'Status', type: 'status' },
+        { key: 'status', label: 'Status', type: 'status' }
       ];
 
       const result = formatForExport(data, columns);
@@ -303,7 +304,7 @@ describe('Formatting Utils', () => {
       expect(result).toEqual([
         {
           Name: 'John Doe',
-          Amount: '$1,234.56',
+          Amount: expect.stringMatching(/^1\.235\s*₫$/),
           Date: 'Jan 15, 2024',
           Status: 'Active',
         },

@@ -186,9 +186,11 @@ describe('Constants', () => {
 
   describe('CURRENCY', () => {
     it('has correct currency configuration', () => {
-      expect(CURRENCY.DEFAULT).toBe('USD');
-      expect(CURRENCY.SYMBOL).toBe('$');
-      expect(CURRENCY.DECIMAL_PLACES).toBe(2);
+      expect(CURRENCY.DEFAULT).toBe('VND');
+      expect(CURRENCY.SUPPORTED).toContain('VND');
+      expect(CURRENCY.SUPPORTED).toContain('USD');
+      expect(CURRENCY.SYMBOLS.VND).toBe('₫');
+      expect(CURRENCY.SYMBOLS.USD).toBe('$');
     });
 
     it('is readonly', () => {

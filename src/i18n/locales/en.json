@@ -43,6 +43,9 @@
     "light": "Light",
     "system": "System"
   },
+  "app": {
+    "title": "Debt Repayment"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "customers": "Customers",
@@ -71,28 +74,48 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "overview": "Overview",
-    "totalOutstanding": "Total Outstanding Balance",
+    "subtitle": "Overview of debt and transaction status",
+    "loading": "Loading...",
+    "loadingData": "Loading dashboard data",
+    "error": "Error",
+    "noData": "No Data",
+    "noDataDescription": "No data to display",
+    "totalOutstanding": "Total Outstanding",
     "activeCustomers": "Active Customers",
-    "monthlyTransactions": "Monthly Transactions",
+    "transactionsInPeriod": "Transactions in {{period}}",
+    "transactionAmountsInPeriod": "Transaction Amounts in {{period}}",
     "totalTransactions": "Total Transactions",
-    "balanceByBranch": "Balance by Branch",
-    "recentTransactions": "Recent Transactions",
-    "topCustomers": "Top Customers",
+    "balanceByBank": "Balance by Bank Account",
+    "balanceByBankDescription": "Balance distribution by bank account",
     "cashFlow": "Cash Flow",
-    "periodComparison": "Period Comparison",
-    "thisMonth": "This Month",
-    "lastMonth": "Last Month",
-    "thisYear": "This Year",
-    "lastYear": "Last Year",
-    "day": "Day",
-    "week": "Week",
-    "month": "Month",
-    "quarter": "Quarter",
-    "year": "Year",
-    "noData": "No data available",
-    "loadingMetrics": "Loading metrics...",
-    "errorLoadingMetrics": "Error loading metrics"
+    "cashFlowDescription": "Cash flow chart over time",
+    "balanceByBranch": "Transaction Amounts by Branch",
+    "balanceByBranchDescription": "Total transaction amounts for each branch",
+    "recentTransactions": "Recent Transactions",
+    "recentTransactionsDescription": "List of latest transactions",
+    "topCustomers": "Top Customers",
+    "topCustomersDescription": "List of customers with highest balances",
+    "totalBalance": "Total Balance",
+    "totalIncome": "Total Income",
+    "totalDebt": "Total Debt",
+    "totalTransactionAmount": "Total Transaction Amount",
+    "noTransactions": "No transactions",
+    "noCustomers": "No customers",
+    "customerId": "Customer #{{id}}",
+    "accountId": "Account #{{id}}",
+    "lastTransaction": "Last transaction",
+    "showingFirstN": "Showing {{count}}/{{total}}",
+    "timeRange": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month",
+      "quarter": "Quarter",
+      "year": "Year"
+    },
+    "inflow": "Inflow",
+    "outflow": "Outflow",
+    "netFlow": "Net Flow",
+    "ofTotal": "of total"
   },
   "customers": {
     "title": "Customers",
@@ -229,7 +252,14 @@
   },
   "reports": {
     "title": "Reports",
-    "keyMetrics": "Key Metrics Summary",
+    "keyMetrics": {
+      "title": "Key Metrics Report",
+      "description": "Overview of important system metrics",
+      "totalOutstanding": "Total Outstanding Balance",
+      "activeCustomers": "Active Customers",
+      "transactionsInPeriod": "Transactions in {{period}}",
+      "totalTransactions": "Total Transactions"
+    },
     "customerBalance": "Customer Balance Report",
     "transactionReport": "Transaction Report",
     "cashFlowReport": "Cash Flow Report",
@@ -434,5 +464,13 @@
     "accountCreated": "Account created successfully",
     "accountUpdated": "Account updated successfully",
     "accountDeleted": "Account deleted successfully"
+  },
+  "transactions": {
+    "types": {
+      "payment": "Payment",
+      "charge": "Charge",
+      "adjustment": "Adjustment",
+      "refund": "Refund"
+    }
   }
 } 

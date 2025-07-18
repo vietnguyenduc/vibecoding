@@ -19,16 +19,16 @@ const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({ value, onChange }
   ];
 
   return (
-    <div className="flex bg-gray-100 rounded-lg p-1">
+    <div className="flex flex-wrap gap-2 bg-gray-100 rounded-lg p-1 overflow-x-auto">
       {timeRanges.map((range) => (
         <button
           key={range.value}
           onClick={() => onChange(range.value)}
-          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-            value === range.value
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-          }`}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors whitespace-nowrap
+            ${value === range.value
+              ? 'bg-blue-600 text-white border-blue-600 shadow'
+              : 'bg-white text-gray-800 border-gray-300 hover:bg-blue-50 hover:border-blue-400'}
+          `}
         >
           {range.label}
         </button>

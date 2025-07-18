@@ -82,10 +82,16 @@ export const DATE_FORMATS = {
 
 // Currency
 export const CURRENCY = {
-  DEFAULT: 'USD',
-  SYMBOL: '$',
-  DECIMAL_PLACES: 2,
-} as const
+  DEFAULT: 'VND',
+  SUPPORTED: ['VND', 'USD', 'EUR', 'GBP', 'JPY'] as const,
+  SYMBOLS: {
+    VND: '₫',
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    JPY: '¥'
+  }
+} as const;
 
 // Local Storage Keys
 export const STORAGE_KEYS = {

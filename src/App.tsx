@@ -13,27 +13,23 @@ import ProtectedRoute from './components/Auth/ProtectedRoute'
 function App() {
   return (
     <Router>
-      <div className="App">
-        <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<Login />} />
-          
-          {/* Protected routes with layout */}
-          <Route path="/" element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="customers" element={<CustomerList />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="import/transactions" element={<TransactionImport />} />
-            <Route path="import/customers" element={<CustomerImport />} />
-          </Route>
-          
-        </Routes>
-      </div>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        {/* Protected routes with layout */}
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="customers" element={<CustomerList />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="import/transactions" element={<TransactionImport />} />
+          <Route path="import/customers" element={<CustomerImport />} />
+        </Route>
+      </Routes>
     </Router>
   )
 }

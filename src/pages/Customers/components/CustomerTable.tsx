@@ -224,13 +224,10 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                 {getStatusBadge(customer.is_active)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div className="flex items-center justify-end space-x-2">
+                <div className="flex items-center space-x-2">
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onCustomerAction('view', customer);
-                    }}
-                    className="text-primary-600 hover:text-primary-900"
+                    onClick={() => onCustomerAction('view', customer)}
+                    className="p-1 text-gray-600 hover:text-blue-600 bg-white border border-gray-300 rounded hover:bg-blue-50 transition-colors"
                     title={t('customers.actions.view')}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,11 +236,8 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                     </svg>
                   </button>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onCustomerAction('edit', customer);
-                    }}
-                    className="text-indigo-600 hover:text-indigo-900"
+                    onClick={() => onCustomerAction('edit', customer)}
+                    className="p-1 text-gray-600 hover:text-green-600 bg-white border border-gray-300 rounded hover:bg-green-50 transition-colors"
                     title={t('customers.actions.edit')}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,11 +245,8 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                     </svg>
                   </button>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onCustomerAction('delete', customer);
-                    }}
-                    className="text-red-600 hover:text-red-900"
+                    onClick={() => onCustomerAction('delete', customer)}
+                    className="p-1 text-gray-600 hover:text-red-600 bg-white border border-gray-300 rounded hover:bg-red-50 transition-colors"
                     title={t('customers.actions.delete')}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

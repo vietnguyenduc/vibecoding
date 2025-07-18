@@ -16,17 +16,13 @@ export const useI18n = () => {
   const isVietnamese = () => currentLanguage === 'vi'
 
   const formatCurrency = (amount: number) => {
-    if (isVietnamese()) {
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND'
-      }).format(amount)
-    }
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(isVietnamese() ? 'vi-VN' : 'en-US', {
       style: 'currency',
-      currency: 'USD'
-    }).format(amount)
-  }
+      currency: isVietnamese() ? 'VND' : 'USD',
+      minimumFractionDigits: isVietnamese() ? 0 : 2,
+      maximumFractionDigits: isVietnamese() ? 0 : 2,
+    }).format(amount);
+  };
 
   const formatDate = (date: string | Date) => {
     const dateObj = typeof date === 'string' ? new Date(date) : date
@@ -95,6 +91,10 @@ export const useI18n = () => {
     return isVietnamese() ? 'VND' : 'USD'
   }
 
+  const getCurrency = () => {
+    return isVietnamese() ? 'VND' : 'USD';
+  };
+
   return {
     t,
     i18n,
@@ -109,6 +109,7 @@ export const useI18n = () => {
     formatNumber,
     getDirection,
     getCurrencySymbol,
-    getCurrencyCode
+    getCurrencyCode,
+    getCurrency
   }
 } 

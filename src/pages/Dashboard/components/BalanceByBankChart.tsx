@@ -80,7 +80,7 @@ const BalanceByBankChart: React.FC<BalanceByBankChartProps> = ({ data }) => {
   };
 
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-56">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
