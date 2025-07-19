@@ -1,4 +1,5 @@
 import { format, parseISO } from 'date-fns';
+import { vi } from 'date-fns/locale';
 
 // Currency formatting
 export const formatCurrency = (amount: number, currency = 'VND'): string => {
@@ -7,14 +8,15 @@ export const formatCurrency = (amount: number, currency = 'VND'): string => {
     currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
+    currencyDisplay: 'symbol',
   }).format(amount);
 };
 
 // Date formatting
-export const formatDate = (date: string | Date, formatString = 'MMM dd, yyyy'): string => {
+export const formatDate = (date: string | Date, formatString = 'dd MMM, yyyy'): string => {
   try {
     const dateObj = typeof date === 'string' ? parseISO(date) : date;
-    return format(dateObj, formatString);
+    return format(dateObj, formatString, { locale: vi });
   } catch (error) {
     console.error('Error formatting date:', error);
     return 'Invalid Date';
@@ -23,7 +25,7 @@ export const formatDate = (date: string | Date, formatString = 'MMM dd, yyyy'): 
 
 // Date and time formatting
 export const formatDateTime = (date: string | Date): string => {
-  return formatDate(date, 'MMM dd, yyyy HH:mm');
+  return formatDate(date, 'dd MMM, yyyy HH:mm');
 };
 
 // Time formatting
@@ -33,7 +35,7 @@ export const formatTime = (date: string | Date): string => {
 
 // Number formatting
 export const formatNumber = (number: number, decimals = 0): string => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('vi-VN', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(number);
@@ -105,16 +107,16 @@ export const formatRelativeTime = (date: string | Date): string => {
     const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
     
     if (diffInSeconds < 60) {
-      return 'Just now';
+      return 'Vừa xong';
     } else if (diffInSeconds < 3600) {
       const minutes = Math.floor(diffInSeconds / 60);
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+      return `${minutes} phút trước`;
     } else if (diffInSeconds < 86400) {
       const hours = Math.floor(diffInSeconds / 3600);
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+      return `${hours} giờ trước`;
     } else if (diffInSeconds < 2592000) {
       const days = Math.floor(diffInSeconds / 86400);
-      return `${days} day${days > 1 ? 's' : ''} ago`;
+      return `${days} ngày trước`;
     } else {
       return formatDate(dateObj);
     }
@@ -127,10 +129,10 @@ export const formatRelativeTime = (date: string | Date): string => {
 // Transaction type formatting
 export const formatTransactionType = (type: string): string => {
   const typeMap: Record<string, string> = {
-    payment: 'Payment',
-    charge: 'Charge',
-    adjustment: 'Adjustment',
-    refund: 'Refund'
+    payment: 'Tiền vào',
+    charge: 'Tiền ra',
+    adjustment: 'Điều chỉnh',
+    refund: 'Hoàn tiền'
   }
   return typeMap[type] || capitalize(type)
 }
@@ -138,9 +140,9 @@ export const formatTransactionType = (type: string): string => {
 // User role formatting
 export const formatUserRole = (role: string): string => {
   const roleMap: Record<string, string> = {
-    admin: 'Administrator',
-    branch_manager: 'Branch Manager',
-    staff: 'Staff'
+    admin: 'Quản trị viên',
+    branch_manager: 'Quản lý chi nhánh',
+    staff: 'Nhân viên'
   }
   return roleMap[role] || capitalize(role.replace('_', ' '))
 }
@@ -148,7 +150,7 @@ export const formatUserRole = (role: string): string => {
 // Status formatting
 export const formatStatus = (status: boolean | string): string => {
   if (typeof status === 'boolean') {
-    return status ? 'Active' : 'Inactive'
+    return status ? 'Hoạt động' : 'Không hoạt động'
   }
   return capitalize(status)
 }

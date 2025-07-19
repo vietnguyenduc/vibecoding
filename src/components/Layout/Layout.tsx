@@ -7,7 +7,7 @@ const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50">
       <Navigation onMenuClick={() => setSidebarOpen(true)} />
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
@@ -19,8 +19,8 @@ const Layout: React.FC = () => {
         </div>
       )}
       <div className="flex w-full">
-        {/* Desktop sidebar */}
-        <div className="hidden lg:block w-64 flex-shrink-0">
+        {/* Desktop sidebar - sticky */}
+        <div className="hidden lg:block w-64 flex-shrink-0 sticky top-16 h-screen overflow-y-auto">
           <Sidebar />
         </div>
         {/* Mobile sidebar */}
@@ -30,7 +30,7 @@ const Layout: React.FC = () => {
           <Sidebar onClose={() => setSidebarOpen(false)} />
         </div>
         {/* Main content - full width, flush left */}
-        <main className="flex-1 min-w-0 w-full">
+        <main className="flex-1 min-w-0 w-full overflow-x-hidden">
           <div className="p-4 sm:p-6 lg:p-8 w-full">
             <Outlet />
           </div>

@@ -45,7 +45,8 @@
     "system": "Hệ thống"
   },
   "app": {
-    "title": "Quản lý Công nợ"
+    "title": "Quản lý công nợ TPL",
+    "subtitle": "Hệ thống quản lý công nợ và giao dịch"
   },
   "navigation": {
     "dashboard": "Bảng điều khiển",
@@ -53,6 +54,8 @@
     "transactions": "Giao dịch",
     "reports": "Báo cáo",
     "import": "Nhập dữ liệu",
+    "importTransactions": "Nhập giao dịch",
+    "importCustomers": "Nhập khách hàng",
     "settings": "Cài đặt",
     "help": "Trợ giúp",
     "support": "Hỗ trợ"
@@ -96,6 +99,8 @@
     "recentTransactionsDescription": "Danh sách các giao dịch mới nhất",
     "topCustomers": "Khách hàng hàng đầu",
     "topCustomersDescription": "Danh sách khách hàng có số dư cao nhất",
+    "customersToWatch": "Khách hàng cần chú ý",
+    "customersToWatchDescription": "Danh sách khách hàng có công nợ cao tính tới thời điểm hiện tại",
     "totalBalance": "Tổng số tiền giao dịch",
     "totalIncome": "Tổng thu",
     "totalDebt": "Tổng cho nợ",
@@ -116,7 +121,71 @@
     "inflow": "Tiền vào",
     "outflow": "Tiền ra",
     "netFlow": "Dòng tiền ròng",
-    "ofTotal": "của tổng"
+    "ofTotal": "của tổng",
+    "startBalance": "Số dư đầu kỳ",
+    "endBalance": "Số dư cuối kỳ",
+    "increase": "Tăng",
+    "decrease": "Giảm",
+    "runningTotal": "Tổng tích lũy",
+    "noCashFlowData": "Không có dữ liệu dòng tiền",
+    "noBankData": "Không có dữ liệu ngân hàng",
+    "accountNumber": "Số tài khoản",
+    "balance": "Số dư",
+    "createTransaction": "Tạo giao dịch",
+    "transactionList": "Danh sách giao dịch",
+    "transactions": {
+      "title": "Danh sách giao dịch",
+      "subtitle": "Quản lý và theo dõi tất cả giao dịch",
+      "loading": "Đang tải...",
+      "loadingData": "Đang tải dữ liệu giao dịch...",
+      "error": "Lỗi",
+      "addTransaction": "Thêm giao dịch",
+      "filters": "Bộ lọc",
+      "search": "Tìm kiếm",
+      "searchPlaceholder": "Tìm theo mã giao dịch, khách hàng...",
+      "dateRange": "Khoảng thời gian",
+      "transactionType": "Loại giao dịch",
+      "allTypes": "Tất cả loại",
+      "transactionList": "Danh sách giao dịch",
+      "showingResults": "Hiển thị {{start}}-{{end}} trong tổng số {{total}} giao dịch",
+      "noTransactions": "Không có giao dịch nào",
+      "transactionCode": "Mã giao dịch",
+      "customer": "Khách hàng",
+      "amount": "Số tiền",
+      "transactionDate": "Ngày giao dịch",
+      "description": "Mô tả",
+      "types": {
+        "payment": "Tiền vào",
+        "charge": "Tiền ra",
+        "adjustment": "Điều chỉnh",
+        "refund": "Hoàn tiền"
+      }
+    },
+    "timeLabels": {
+      "weekdays": {
+        "sunday": "CN",
+        "monday": "T2", 
+        "tuesday": "T3",
+        "wednesday": "T4",
+        "thursday": "T5",
+        "friday": "T6",
+        "saturday": "T7"
+      },
+      "months": {
+        "january": "Tháng 1",
+        "february": "Tháng 2",
+        "march": "Tháng 3",
+        "april": "Tháng 4",
+        "may": "Tháng 5",
+        "june": "Tháng 6",
+        "july": "Tháng 7",
+        "august": "Tháng 8",
+        "september": "Tháng 9",
+        "october": "Tháng 10",
+        "november": "Tháng 11",
+        "december": "Tháng 12"
+      }
+    }
   },
   "customers": {
     "title": "Khách hàng",
@@ -673,8 +742,8 @@
   },
   "transactions": {
     "types": {
-      "payment": "Thanh toán",
-      "charge": "Thu nợ",
+      "payment": "Tiền vào",
+      "charge": "Tiền ra",
       "adjustment": "Điều chỉnh",
       "refund": "Hoàn tiền"
     }

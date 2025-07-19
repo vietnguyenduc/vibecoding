@@ -46,7 +46,7 @@ export interface Customer {
   phone?: string
   email?: string
   address?: string
-  branch_id: string
+  branch_id?: string | null
   total_balance: number
   last_transaction_date?: string
   is_active: boolean
@@ -58,7 +58,9 @@ export interface Transaction {
   id: string
   transaction_code: string
   customer_id: string
+  customer_name?: string
   bank_account_id: string
+  bank_account_name?: string
   branch_id: string
   transaction_type: TransactionType
   amount: number
@@ -102,7 +104,7 @@ export interface CustomerForm {
   phone?: string
   email?: string
   address?: string
-  branch_id: string
+  branch_id?: string
 }
 
 export interface TransactionForm {

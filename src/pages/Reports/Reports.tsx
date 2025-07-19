@@ -101,7 +101,7 @@ const Reports: React.FC = () => {
       summary: {
         totalOutstanding: metrics.data?.totalOutstanding || 0,
         activeCustomers: metrics.data?.activeCustomers || 0,
-        monthlyTransactions: metrics.data?.monthlyTransactions || 0,
+        monthlyTransactions: metrics.data?.transactionsInPeriod || 0,
         totalTransactions: metrics.data?.totalTransactions || 0,
       },
     };

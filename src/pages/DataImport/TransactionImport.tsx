@@ -496,7 +496,7 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
                   value={rawData}
                   onChange={handleRawDataChange}
                   rows={15}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                   placeholder={t('import.pastePlaceholder')}
                 />
                 <p className="mt-2 text-sm text-gray-500">

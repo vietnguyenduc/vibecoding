@@ -35,11 +35,11 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
     }
 
     return sortOrder === 'asc' ? (
-      <svg className="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
       </svg>
     ) : (
-      <svg className="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
       </svg>
     );
@@ -67,15 +67,22 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
     );
   };
 
+  const handleViewTransactions = (e: React.MouseEvent, customer: Customer) => {
+    e.stopPropagation();
+    onCustomerAction('transactions', customer);
+  };
+
   if (loading) {
     return (
-      <div className="overflow-hidden">
+      <div className="overflow-x-auto">
         <div className="animate-pulse">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="border-b border-gray-200">
-              <div className="px-6 py-4">
+              <div className="px-4 py-4">
                 <div className="flex items-center space-x-4">
-                  <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                  <div className="h-8 bg-gray-200 rounded w-24"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/6"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/6"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/6"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/6"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/6"></div>
@@ -116,13 +123,16 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
   }
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
+            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <span>Giao dịch</span>
+            </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
               onClick={() => handleSort('customer_code')}
             >
               <div className="flex items-center space-x-1">
@@ -132,7 +142,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
               onClick={() => handleSort('full_name')}
             >
               <div className="flex items-center space-x-1">
@@ -142,7 +152,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
               onClick={() => handleSort('phone')}
             >
               <div className="flex items-center space-x-1">
@@ -152,17 +162,27 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              onClick={() => handleSort('total_balance')}
+              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              onClick={() => handleSort('address')}
             >
               <div className="flex items-center space-x-1">
+                <span>Địa chỉ</span>
+                {getSortIcon('address')}
+              </div>
+            </th>
+            <th
+              scope="col"
+              className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              onClick={() => handleSort('total_balance')}
+            >
+              <div className="flex items-center justify-end space-x-1">
                 <span>{t('customers.columns.balance')}</span>
                 {getSortIcon('total_balance')}
               </div>
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
               onClick={() => handleSort('last_transaction_date')}
             >
               <div className="flex items-center space-x-1">
@@ -172,7 +192,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
               onClick={() => handleSort('is_active')}
             >
               <div className="flex items-center space-x-1">
@@ -180,7 +200,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                 {getSortIcon('is_active')}
               </div>
             </th>
-            <th scope="col" className="relative px-6 py-3">
+            <th scope="col" className="relative px-4 py-3">
               <span className="sr-only">{t('customers.columns.actions')}</span>
             </th>
           </tr>
@@ -196,10 +216,23 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
               onMouseLeave={() => setHoveredRow(null)}
               onClick={() => onCustomerSelect(customer)}
             >
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              {/* Giao dịch Column - Nổi bật */}
+              <td className="px-4 py-4 whitespace-nowrap">
+                <button
+                  onClick={(e) => handleViewTransactions(e, customer)}
+                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shadow-sm"
+                  title="Xem chi tiết giao dịch"
+                >
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Giao dịch
+                </button>
+              </td>
+              <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {customer.customer_code}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-4 py-4 whitespace-nowrap">
                 <div className="text-sm font-medium text-gray-900">
                   {customer.full_name}
                 </div>
@@ -207,37 +240,35 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                   <div className="text-sm text-gray-500">{customer.email}</div>
                 )}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                 {customer.phone ? formatPhoneNumber(customer.phone) : '-'}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-4 py-4 text-sm text-gray-900">
+                <div className="max-w-xs truncate">
+                  {customer.address || '-'}
+                </div>
+              </td>
+              <td className="px-4 py-4 whitespace-nowrap text-right">
                 <div className={`text-sm font-medium ${getBalanceColor(customer.total_balance)}`}>
                   {formatCurrency(customer.total_balance)}
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                 {customer.last_transaction_date
                   ? formatDate(customer.last_transaction_date)
                   : t('customers.noTransactions')}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-4 py-4 whitespace-nowrap">
                 {getStatusBadge(customer.is_active)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div className="flex items-center space-x-2">
+              <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <div className="flex items-center space-x-1">
                   <button
-                    onClick={() => onCustomerAction('view', customer)}
-                    className="p-1 text-gray-600 hover:text-blue-600 bg-white border border-gray-300 rounded hover:bg-blue-50 transition-colors"
-                    title={t('customers.actions.view')}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => onCustomerAction('edit', customer)}
-                    className="p-1 text-gray-600 hover:text-green-600 bg-white border border-gray-300 rounded hover:bg-green-50 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onCustomerAction('edit', customer);
+                    }}
+                    className="p-1.5 text-gray-600 hover:text-green-600 bg-white border border-gray-300 rounded hover:bg-green-50 transition-colors"
                     title={t('customers.actions.edit')}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,8 +276,11 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
                     </svg>
                   </button>
                   <button
-                    onClick={() => onCustomerAction('delete', customer)}
-                    className="p-1 text-gray-600 hover:text-red-600 bg-white border border-gray-300 rounded hover:bg-red-50 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onCustomerAction('delete', customer);
+                    }}
+                    className="p-1.5 text-gray-600 hover:text-red-600 bg-white border border-gray-300 rounded hover:bg-red-50 transition-colors"
                     title={t('customers.actions.delete')}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

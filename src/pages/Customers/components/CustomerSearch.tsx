@@ -104,7 +104,7 @@ const CustomerSearch: React.FC<CustomerSearchProps> = ({
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={() => setIsOpen(value.length >= 2)}
-          placeholder={placeholder || t('customers.searchPlaceholder')}
+          placeholder={placeholder || "Tìm kiếm theo tên, mã, email, số điện thoại..."}
           className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
         />
         

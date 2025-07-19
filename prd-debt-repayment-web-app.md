@@ -176,14 +176,64 @@ The Debt and Repayment Web Application is a comprehensive cloud-based system des
 - **Data Validation:** Zod or Yup (for schema validation)
 - **Internationalization:** i18next and react-i18next (for multi-language support)
 
-## 7. Design Considerations
+## 7. Design System & Apple-Style UI
 
-### 7.1 User Interface
-- **Modern Web Design:** Clean, professional interface suitable for business use
-- **Responsive Layout:** Must work effectively on desktop, tablet, and mobile devices using Tailwind CSS
-- **Data Visualization:** Use of charts and graphs for financial data presentation
-- **Color Coding:** Consistent use of red/green for negative/positive values
-- **Intuitive Navigation:** Clear menu structure with descriptive SVG icons
+### 7.1 Design Philosophy
+- **Apple-Inspired Design:** Clean, minimal, and professional interface following Apple's design principles
+- **Typography:** Inter font family with optimized weights (300, 400, 500, 600, 700) for excellent readability
+- **Color Palette:** Subtle grays, clean whites, and strategic use of blue (#3B82F6) for primary actions
+- **Spacing:** Consistent 4px grid system with generous padding and margins
+- **Shadows:** Subtle shadows (shadow-sm, shadow-md) for depth without heaviness
+
+### 7.2 Typography System
+- **Primary Font:** Inter (Google Fonts) - designed for screens, highly legible
+- **Font Stack:** Inter → SF Pro Display → System fonts
+- **Font Weights:**
+  - Light (300): Subtle text, secondary information
+  - Normal (400): Body text, default content
+  - Medium (500): Labels, card titles
+  - Semibold (600): Headers, important values
+  - Bold (700): Primary headings, critical information
+- **Line Height:** 1.5 for optimal readability
+- **Letter Spacing:** Normal tracking for clean appearance
+
+### 7.3 Component Design Patterns
+
+#### Buttons & Interactive Elements
+- **Segmented Controls:** Apple-style with subtle background, rounded corners, and smooth transitions
+- **Selected State:** White background, blue text, subtle shadow, slight scale effect (105%)
+- **Unselected State:** Transparent background, muted text, hover effects
+- **Border Radius:** Rounded-lg (8px) for buttons, rounded-xl (12px) for containers
+- **Transitions:** 200ms duration for smooth interactions
+
+#### Cards & Containers
+- **Background:** Clean white (#FFFFFF) with subtle borders
+- **Shadows:** shadow-sm for containers, shadow-md for elevated elements
+- **Borders:** Very light gray (#F3F4F6) for subtle definition
+- **Padding:** Generous spacing (16px-24px) for breathing room
+
+#### Charts & Data Visualization
+- **Color Scheme:**
+  - Positive/Green: #92CF9A (soft, professional green)
+  - Negative/Red: #ED6455 (warm, readable red)
+  - Neutral/Gray: #BDBDBD (subtle gray for totals)
+  - Primary/Blue: #3B82F6 (Apple blue for selections)
+- **Data Labels:** Always visible with proper formatting
+- **Grid Lines:** Subtle and unobtrusive
+- **Tooltips:** Clean, minimal design with essential information
+
+### 7.4 Responsive Design
+- **Mobile-First:** Optimized for mobile devices with progressive enhancement
+- **Breakpoints:** Tailwind CSS responsive classes (sm, md, lg, xl)
+- **Touch Targets:** Minimum 44px for interactive elements
+- **Spacing:** Adaptive padding and margins for different screen sizes
+
+### 7.5 User Experience Principles
+- **Progressive Disclosure:** Show essential information first, expand on demand
+- **Real-time Feedback:** Immediate validation and visual feedback
+- **Consistent Interactions:** Predictable behavior across all components
+- **Accessibility:** High contrast ratios, proper focus states, screen reader support
+- **Performance:** Fast loading, smooth animations, optimized assets
 
 ### 7.2 User Experience
 - **Progressive Disclosure:** Show essential information first, with options to drill down

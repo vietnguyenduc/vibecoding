@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { databaseService } from '../../services/database';
 import { formatCurrency } from '../../utils/formatting';
@@ -18,8 +19,11 @@ export type TimeRange = 'day' | 'week' | 'month' | 'quarter' | 'year';
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [timeRange, setTimeRange] = useState<TimeRange>('month');
+  const [topCustomersCount, setTopCustomersCount] = useState(8);
+  const [recentTransactionsCount, setRecentTransactionsCount] = useState(8);
   const [metrics, setMetrics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -109,10 +113,10 @@ const Dashboard: React.FC = () => {
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
                 {t('dashboard.title')}
               </h1>
-              <p className="mt-1 text-sm text-gray-600">
+              <p className="mt-2 text-base font-normal text-gray-600 tracking-normal">
                 {t('dashboard.subtitle')}
               </p>
             </div>
@@ -213,17 +217,42 @@ const Dashboard: React.FC = () => {
           {/* Recent Transactions */}
           <div className="bg-white rounded-lg shadow w-full">
             <div className="px-4 py-3 border-b border-gray-200">
-              <h3 className="text-base font-medium text-gray-900">
-                {t('dashboard.recentTransactions')}
-              </h3>
-              <p className="mt-1 text-xs text-gray-500">
-                {t('dashboard.recentTransactionsDescription')}
-              </p>
+              <div>
+                <h3 className="text-base font-medium text-gray-900">
+                  {t('dashboard.recentTransactions')}
+                </h3>
+                <p className="mt-1 text-xs text-gray-500">
+                  {t('dashboard.recentTransactionsDescription')}
+                </p>
+              </div>
+            </div>
+            <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => navigate('/import/transactions')}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  {t('dashboard.createTransaction')}
+                </button>
+                <button
+                  onClick={() => navigate('/transactions')}
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  {t('dashboard.transactionList')}
+                </button>
+              </div>
             </div>
             <div className="p-4">
               <RecentTransactions 
                 transactions={metrics.recentTransactions}
-                maxItems={8}
+                maxItems={recentTransactionsCount}
+                onMaxItemsChange={setRecentTransactionsCount}
               />
             </div>
           </div>
@@ -231,16 +260,17 @@ const Dashboard: React.FC = () => {
           <div className="bg-white rounded-lg shadow w-full">
             <div className="px-4 py-3 border-b border-gray-200">
               <h3 className="text-base font-medium text-gray-900">
-                {t('dashboard.topCustomers')}
+                {t('dashboard.customersToWatch')}
               </h3>
               <p className="mt-1 text-xs text-gray-500">
-                {t('dashboard.topCustomersDescription')}
+                {t('dashboard.customersToWatchDescription')}
               </p>
             </div>
             <div className="p-4">
               <TopCustomers 
                 customers={metrics.topCustomers}
-                maxItems={8}
+                maxItems={topCustomersCount}
+                onMaxItemsChange={setTopCustomersCount}
               />
             </div>
           </div>

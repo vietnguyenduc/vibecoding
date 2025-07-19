@@ -161,10 +161,14 @@ The application supports both English and Vietnamese languages. Language files a
 ## 🎨 UI/UX Features
 
 ### Design System
-- Custom business theme with Tailwind CSS
-- Consistent color palette and typography
-- Responsive grid system
-- Accessibility compliant
+- **Apple-Style Design**: Clean, minimal, and professional interface
+- **Typography**: Inter font family with optimized weights for excellent readability
+- **Color Palette**: Subtle grays, clean whites, and strategic use of Apple blue
+- **Component Patterns**: Consistent buttons, cards, and interactive elements
+- **Responsive Design**: Mobile-first approach with progressive enhancement
+- **Accessibility**: High contrast ratios, proper focus states, screen reader support
+
+For detailed design system documentation, see [DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md)
 
 ### Components
 - Loading states and error boundaries

@@ -1,7 +1,6 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
-import Backend from 'i18next-http-backend'
 
 // Import language resources
 import en from './locales/en.json'
@@ -17,8 +16,6 @@ const resources = {
 }
 
 i18n
-  // Load translations using http (default public/locales)
-  .use(Backend)
   // Detect user language
   .use(LanguageDetector)
   // Pass the i18n instance to react-i18next
@@ -55,11 +52,6 @@ i18n
 
       // Optional set cookie options, reference:[MDN Set-Cookie docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie)
       cookieOptions: { path: '/', sameSite: 'strict' }
-    },
-
-    backend: {
-      // For all available options read the backend's repository readme file on https://github.com/i18next/i18next-http-backend
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
     }
   })
 

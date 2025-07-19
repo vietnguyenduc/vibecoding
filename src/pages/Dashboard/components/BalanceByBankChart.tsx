@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  LabelList,
 } from 'recharts';
 import { formatCurrency } from '../../../utils/formatting';
 
@@ -73,31 +74,40 @@ const BalanceByBankChart: React.FC<BalanceByBankChartProps> = ({ data }) => {
         y={y}
         width={width}
         height={height}
-        fill={isPositive ? '#10B981' : '#EF4444'}
+        fill={isPositive ? '#92cf9a' : '#ed6455'}
         rx={2}
       />
     );
   };
 
   return (
-    <div className="w-full h-56">
+    <div className="w-full h-64">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
           <XAxis
             dataKey="name"
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 11 }}
             angle={-45}
             textAnchor="end"
-            height={80}
+            height={100}
             interval={0}
+            tickLine={false}
           />
           <YAxis
-            tick={{ fontSize: 12 }}
-            tickFormatter={(value) => formatCurrency(value)}
+            tick={{ fontSize: 11 }}
+            tickFormatter={(value) => Math.round(value / 1000000) + 'M'}
+            width={60}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Bar dataKey="balance" shape={<CustomBar />} />
+          <Bar dataKey="balance" shape={<CustomBar />}>
+            <LabelList 
+              dataKey="balance" 
+              position="top" 
+              formatter={(value: number) => formatCurrency(value)}
+              style={{ fontSize: '10px', fontWeight: '500' }}
+            />
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

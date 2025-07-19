@@ -39,13 +39,13 @@ const Navigation: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
+    <nav className="sticky top-0 z-[100] bg-white shadow-sm border-b border-gray-200 backdrop-blur-sm" style={{ position: 'sticky', top: 0 }}>
       <div className="flex justify-between items-center h-16 px-4 sm:px-6 lg:px-8">
         {/* Left: Brand */}
         <div className="flex items-center">
           <button
             onClick={onMenuClick}
-            className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 lg:hidden"
+            className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500 lg:hidden"
           >
             <span className="sr-only">Open main menu</span>
             <svg
@@ -63,9 +63,25 @@ const Navigation: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
               />
             </svg>
           </button>
-          <span className="ml-2 text-2xl md:text-3xl font-extrabold tracking-wide uppercase text-primary-700">
-            {t('app.title')}
-          </span>
+          <div className="ml-2 flex items-center space-x-3">
+            {/* App Icon */}
+            <div className="flex-shrink-0">
+              <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            {/* Divider Line */}
+            <div className="mx-3 h-8 w-px bg-gray-300"></div>
+            {/* App Title */}
+            <div className="flex flex-col">
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight leading-tight">
+                Quản lý công nợ TPL ver 1.0 - Developed by Viet Nguyen
+              </h1>
+              <p className="text-xs md:text-sm text-gray-500 font-medium tracking-wide">
+                Hệ thống quản lý công nợ và giao dịch
+              </p>
+            </div>
+          </div>
         </div>
         {/* Right: Today's Date + Language Switcher + User Menu */}
         <div className="flex items-center space-x-4">
@@ -82,10 +98,10 @@ const Navigation: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
           <div className="relative">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="flex items-center space-x-2 text-sm rounded-full bg-white border border-gray-300 px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm"
+              className="flex items-center space-x-2 text-sm rounded-full bg-white border border-gray-300 px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 shadow-sm"
             >
-              <div className="w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">
-                <span className="text-primary-700 font-medium text-xs">U</span>
+              <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                <span className="text-gray-700 font-medium text-xs">U</span>
               </div>
               <span className="text-gray-800 font-medium">User</span>
               <svg

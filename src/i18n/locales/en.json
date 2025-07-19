@@ -44,7 +44,8 @@
     "system": "System"
   },
   "app": {
-    "title": "Debt Repayment"
+    "title": "TPL Debt Management",
+    "subtitle": "Debt and Transaction Management System"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -52,6 +53,8 @@
     "transactions": "Transactions",
     "reports": "Reports",
     "import": "Import",
+    "importTransactions": "Import Transactions",
+    "importCustomers": "Import Customers",
     "settings": "Settings",
     "help": "Help",
     "support": "Support"
@@ -95,6 +98,8 @@
     "recentTransactionsDescription": "List of latest transactions",
     "topCustomers": "Top Customers",
     "topCustomersDescription": "List of customers with highest balances",
+    "customersToWatch": "Customers to Watch",
+    "customersToWatchDescription": "List of customers with high outstanding debt as of current time",
     "totalBalance": "Total Balance",
     "totalIncome": "Total Income",
     "totalDebt": "Total Debt",
@@ -115,7 +120,71 @@
     "inflow": "Inflow",
     "outflow": "Outflow",
     "netFlow": "Net Flow",
-    "ofTotal": "of total"
+    "ofTotal": "of total",
+    "startBalance": "Start Balance",
+    "endBalance": "End Balance",
+    "increase": "Increase",
+    "decrease": "Decrease",
+    "runningTotal": "Running Total",
+    "noCashFlowData": "No cash flow data",
+    "noBankData": "No bank data",
+    "accountNumber": "Account Number",
+    "balance": "Balance",
+    "createTransaction": "Create Transaction",
+    "transactionList": "Transaction List",
+    "transactions": {
+      "title": "Transaction List",
+      "subtitle": "Manage and track all transactions",
+      "loading": "Loading...",
+      "loadingData": "Loading transaction data...",
+      "error": "Error",
+      "addTransaction": "Add Transaction",
+      "filters": "Filters",
+      "search": "Search",
+      "searchPlaceholder": "Search by transaction code, customer...",
+      "dateRange": "Date Range",
+      "transactionType": "Transaction Type",
+      "allTypes": "All Types",
+      "transactionList": "Transaction List",
+      "showingResults": "Showing {{start}}-{{end}} of {{total}} transactions",
+      "noTransactions": "No transactions found",
+      "transactionCode": "Transaction Code",
+      "customer": "Customer",
+      "amount": "Amount",
+      "transactionDate": "Transaction Date",
+      "description": "Description",
+      "types": {
+        "payment": "Payment",
+        "charge": "Charge",
+        "adjustment": "Adjustment",
+        "refund": "Refund"
+      }
+    },
+    "timeLabels": {
+      "weekdays": {
+        "sunday": "Sun",
+        "monday": "Mon", 
+        "tuesday": "Tue",
+        "wednesday": "Wed",
+        "thursday": "Thu",
+        "friday": "Fri",
+        "saturday": "Sat"
+      },
+      "months": {
+        "january": "January",
+        "february": "February",
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "june": "June",
+        "july": "July",
+        "august": "August",
+        "september": "September",
+        "october": "October",
+        "november": "November",
+        "december": "December"
+      }
+    }
   },
   "customers": {
     "title": "Customers",
@@ -467,8 +536,8 @@
   },
   "transactions": {
     "types": {
-      "payment": "Payment",
-      "charge": "Charge",
+      "payment": "Payment received",
+      "charge": "Credit issued",
       "adjustment": "Adjustment",
       "refund": "Refund"
     }

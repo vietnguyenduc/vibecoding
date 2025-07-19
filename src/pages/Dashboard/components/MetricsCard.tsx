@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatCurrency } from '../../../utils/formatting';
+import { formatNumber } from '../../../utils/formatting';
 
 interface MetricsCardProps {
   title: string;
@@ -30,25 +30,25 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
     switch (icon) {
       case 'currency':
         return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
           </svg>
         );
       case 'users':
         return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
         );
       case 'chart':
         return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
         );
       case 'database':
         return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
           </svg>
         );
@@ -61,31 +61,31 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
     switch (color) {
       case 'primary':
         return {
-          bg: 'bg-blue-50',
+          bg: 'bg-gradient-to-br from-blue-50 to-blue-100',
           icon: 'text-blue-600',
           value: 'text-blue-900',
         };
       case 'success':
         return {
-          bg: 'bg-green-50',
+          bg: 'bg-gradient-to-br from-green-50 to-green-100',
           icon: 'text-green-600',
           value: 'text-green-900',
         };
       case 'warning':
         return {
-          bg: 'bg-yellow-50',
-          icon: 'text-yellow-600',
-          value: 'text-yellow-900',
+          bg: 'bg-gradient-to-br from-slate-50 to-slate-100',
+          icon: 'text-slate-600',
+          value: 'text-slate-900',
         };
       case 'info':
         return {
-          bg: 'bg-indigo-50',
-          icon: 'text-indigo-600',
-          value: 'text-indigo-900',
+          bg: 'bg-gradient-to-br from-gray-50 to-gray-100',
+          icon: 'text-gray-600',
+          value: 'text-gray-900',
         };
       default:
         return {
-          bg: 'bg-gray-50',
+          bg: 'bg-gradient-to-br from-gray-50 to-gray-100',
           icon: 'text-gray-600',
           value: 'text-gray-900',
         };
@@ -95,13 +95,13 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
   const colorClasses = getColorClasses();
 
   return (
-    <div className={`${colorClasses.bg} rounded-lg p-4`}>
+    <div className={`${colorClasses.bg} rounded-xl p-4 shadow-sm border border-white/50 backdrop-blur-sm`}>
       <div className="flex items-center">
-        <div className={`${colorClasses.icon} p-2 rounded-md bg-white`}>
+        <div className={`${colorClasses.icon} p-3 rounded-lg bg-white/80 shadow-sm border border-white/50`}>
           {getIcon()}
         </div>
         <div className="ml-3 flex-1">
-          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <p className="text-base font-medium text-gray-700 tracking-normal">{title}</p>
           {dualValues ? (
             <div className="space-y-1">
               <div className="flex items-center justify-between">
@@ -116,9 +116,7 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
                       }`}
                     >
                       {dualValues.incomeChange >= 0 ? '+' : ''}
-                      {typeof dualValues.incomeChange === 'number' && dualValues.incomeChange.toString().includes('.')
-                        ? formatCurrency(dualValues.incomeChange)
-                        : dualValues.incomeChange}
+                      {formatNumber(dualValues.incomeChange)}
                     </span>
                     <svg
                       className={`ml-1 w-3 h-3 ${
@@ -155,17 +153,15 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
                   <div className="flex items-center">
                     <span
                       className={`text-xs font-medium ${
-                        dualValues.debtChange >= 0 ? 'text-green-600' : 'text-red-600'
+                        dualValues.debtChange >= 0 ? 'text-red-600' : 'text-green-600'
                       }`}
                     >
                       {dualValues.debtChange >= 0 ? '+' : ''}
-                      {typeof dualValues.debtChange === 'number' && dualValues.debtChange.toString().includes('.')
-                        ? formatCurrency(dualValues.debtChange)
-                        : dualValues.debtChange}
+                      {formatNumber(dualValues.debtChange)}
                     </span>
                     <svg
                       className={`ml-1 w-3 h-3 ${
-                        dualValues.debtChange >= 0 ? 'text-green-600' : 'text-red-600'
+                        dualValues.debtChange >= 0 ? 'text-red-600' : 'text-green-600'
                       }`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
@@ -189,7 +185,7 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
               </div>
             </div>
           ) : (
-            <p className={`text-xl font-bold ${colorClasses.value}`}>{value}</p>
+            <p className={`text-xl font-semibold ${colorClasses.value} tracking-normal`}>{value}</p>
           )}
           {change !== undefined && (
             <div className="flex items-center mt-1">
@@ -199,9 +195,7 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
                 }`}
               >
                 {changeType === 'increase' ? '+' : ''}
-                {typeof change === 'number' && change.toString().includes('.')
-                  ? formatCurrency(change)
-                  : change}
+                {formatNumber(change)}
               </span>
               <svg
                 className={`ml-1 w-3 h-3 ${

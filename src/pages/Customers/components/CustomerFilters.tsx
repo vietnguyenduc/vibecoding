@@ -80,10 +80,10 @@ const CustomerFilters: React.FC<CustomerFiltersProps> = ({
   };
 
   const formatDateRange = () => {
-    if (!dateRange) return t('customers.filters.allTime');
+    if (!dateRange) return 'Tất cả thời gian';
     
-    const startDate = format(new Date(dateRange.start), 'MMM dd, yyyy');
-    const endDate = format(new Date(dateRange.end), 'MMM dd, yyyy');
+    const startDate = format(new Date(dateRange.start), 'dd/MM/yyyy');
+    const endDate = format(new Date(dateRange.end), 'dd/MM/yyyy');
     
     if (dateRange.start === dateRange.end) {
       return startDate;
@@ -133,40 +133,40 @@ const CustomerFilters: React.FC<CustomerFiltersProps> = ({
           <div className="absolute z-10 mt-2 w-80 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
             <div className="p-4">
               <h3 className="text-sm font-medium text-gray-900 mb-3">
-                {t('customers.filters.dateRange')}
+                Khoảng thời gian
               </h3>
               
               {/* Quick Date Options */}
               <div className="grid grid-cols-2 gap-2 mb-4">
                 <button
                   onClick={() => handleQuickDateSelect('today')}
-                  className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+                  className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors"
                 >
-                  {t('customers.filters.today')}
+                  Hôm nay
                 </button>
                 <button
                   onClick={() => handleQuickDateSelect('week')}
-                  className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+                  className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors"
                 >
-                  {t('customers.filters.lastWeek')}
+                  Tuần trước
                 </button>
                 <button
                   onClick={() => handleQuickDateSelect('month')}
-                  className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+                  className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors"
                 >
-                  {t('customers.filters.thisMonth')}
+                  Tháng này
                 </button>
                 <button
                   onClick={() => handleQuickDateSelect('quarter')}
-                  className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+                  className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors"
                 >
-                  {t('customers.filters.thisQuarter')}
+                  Quý này
                 </button>
                 <button
                   onClick={() => handleQuickDateSelect('year')}
-                  className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+                  className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors"
                 >
-                  {t('customers.filters.thisYear')}
+                  Năm nay
                 </button>
               </div>
 
@@ -174,25 +174,25 @@ const CustomerFilters: React.FC<CustomerFiltersProps> = ({
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('customers.filters.startDate')}
+                    Từ ngày
                   </label>
                   <input
                     type="date"
                     value={dateRange?.start || ''}
                     onChange={(e) => handleCustomDateChange('start', e.target.value)}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-900"
                   />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('customers.filters.endDate')}
+                    Đến ngày
                   </label>
                   <input
                     type="date"
                     value={dateRange?.end || ''}
                     onChange={(e) => handleCustomDateChange('end', e.target.value)}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-900"
                   />
                 </div>
               </div>
@@ -201,15 +201,15 @@ const CustomerFilters: React.FC<CustomerFiltersProps> = ({
               <div className="flex justify-between mt-4 pt-3 border-t border-gray-200">
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-gray-600 hover:text-gray-900"
+                  className="text-sm text-gray-600 hover:text-gray-900 font-medium"
                 >
-                  {t('customers.filters.clear')}
+                  Xóa
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="text-sm text-primary-600 hover:text-primary-700"
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                 >
-                  {t('customers.filters.apply')}
+                  Áp dụng
                 </button>
               </div>
             </div>

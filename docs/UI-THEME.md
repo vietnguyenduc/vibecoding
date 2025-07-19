@@ -1,8 +1,15 @@
-# Business UI Theme Documentation
+# Apple-Style UI Theme Documentation
 
 ## Overview
 
-The Business UI Theme is a comprehensive design system built on top of Tailwind CSS, specifically designed for the Debt Repayment Web Application. It provides a consistent, professional appearance with business-appropriate colors, components, and utilities.
+The Apple-Style UI Theme is a comprehensive design system built on top of Tailwind CSS, specifically designed for the Debt Repayment Web Application. It provides a clean, modern, and professional interface that follows Apple's design principles while maintaining excellent usability and accessibility.
+
+## Design Philosophy
+
+Our UI theme is inspired by Apple's Human Interface Guidelines, emphasizing:
+- **Clarity**: Clean, uncluttered interfaces that focus on content
+- **Deference**: Content takes precedence over chrome and ornamentation
+- **Depth**: Subtle shadows and layering to create hierarchy and focus
 
 ## Color Palette
 

@@ -56,7 +56,7 @@
 
 - [ ] 1.0 Project Setup and Infrastructure
   - [x] 1.1 Initialize Vite project with TypeScript and React
-  - [x] 1.2 Configure Tailwind CSS with custom theme for business UI
+  - [x] 1.2 Configure Tailwind CSS with Apple-style design system and Inter font
   - [x] 1.3 Set up Supabase project and configure environment variables
   - [x] 1.4 Create database schema with tables: users, customers, transactions, branches, bank_accounts, user_roles
   - [x] 1.5 Configure React Router for navigation between pages
@@ -94,11 +94,11 @@
 
 - [x] 4.0 Dashboard and Analytics Implementation
   - [x] 4.1 Create main dashboard layout with responsive grid system
-  - [x] 4.2 Implement key metrics cards (total outstanding balance, period comparison)
+  - [x] 4.2 Implement key metrics cards with Apple-style design and gradient backgrounds
   - [x] 4.3 Build balance breakdown by branch using card format
-  - [x] 4.4 Create balance by bank account column chart using Chart.js/Recharts
-  - [x] 4.5 Implement cash flow waterfall chart for time-based analysis
-  - [x] 4.6 Add time range slicer buttons (Day/Week/Month/Quarter)
+  - [x] 4.4 Create balance by bank account column chart with Apple-style colors and data labels
+  - [x] 4.5 Implement cash flow waterfall chart with proper negative values and Vietnamese labels
+  - [x] 4.6 Add Apple-style segmented control buttons (Day/Week/Month/Quarter)
   - [x] 4.7 Create recent transactions list with configurable display count
   - [x] 4.8 Build top customers list with highest outstanding balance
   - [x] 4.9 Implement real-time data updates using Supabase subscriptions

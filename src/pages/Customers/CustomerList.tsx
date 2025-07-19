@@ -53,15 +53,12 @@ const CustomerList: React.FC = () => {
 
   // Fetch customers
   const fetchCustomers = useCallback(async () => {
-    if (!user?.branch_id) return;
-
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
       const offset = (state.currentPage - 1) * state.pageSize;
       
       const result = await databaseService.customers.getCustomers({
-        branch_id: user.branch_id,
         search: state.searchTerm || undefined,
         limit: state.pageSize,
         offset,
@@ -84,7 +81,7 @@ const CustomerList: React.FC = () => {
         loading: false,
       }));
     }
-  }, [user?.branch_id, state.currentPage, state.pageSize, state.searchTerm]);
+  }, [state.currentPage, state.pageSize, state.searchTerm]);
 
   // Load customers on mount and when filters change
   useEffect(() => {
@@ -134,6 +131,10 @@ const CustomerList: React.FC = () => {
           showDetailModal: true,
         }));
         break;
+      case 'transactions':
+        // Navigate to transactions page with customer filter
+        window.location.href = `/transactions?customer_id=${customer.id}&customer_name=${encodeURIComponent(customer.full_name)}`;
+        break;
       case 'edit':
         setState(prev => ({
           ...prev,
@@ -182,7 +183,6 @@ const CustomerList: React.FC = () => {
       if (state.formMode === 'create') {
         result = await databaseService.customers.createCustomer({
           ...customerData,
-          branch_id: user?.branch_id,
         });
       } else {
         result = await databaseService.customers.updateCustomer(

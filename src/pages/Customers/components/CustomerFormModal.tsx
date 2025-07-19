@@ -162,7 +162,7 @@ const CustomerFormModal: React.FC<CustomerFormModalProps> = ({
                     id="customer_code"
                     value={formData.customer_code}
                     onChange={(e) => handleInputChange('customer_code', e.target.value)}
-                    className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
+                    className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-900 ${
                       errors.customer_code ? 'border-red-300' : ''
                     }`}
                     placeholder={t('customers.form.customerCodePlaceholder')}
@@ -182,7 +182,7 @@ const CustomerFormModal: React.FC<CustomerFormModalProps> = ({
                     id="full_name"
                     value={formData.full_name}
                     onChange={(e) => handleInputChange('full_name', e.target.value)}
-                    className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
+                    className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-900 ${
                       errors.full_name ? 'border-red-300' : ''
                     }`}
                     placeholder={t('customers.form.fullNamePlaceholder')}
@@ -202,7 +202,7 @@ const CustomerFormModal: React.FC<CustomerFormModalProps> = ({
                     id="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
+                    className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-900 ${
                       errors.email ? 'border-red-300' : ''
                     }`}
                     placeholder={t('customers.form.emailPlaceholder')}
@@ -222,7 +222,7 @@ const CustomerFormModal: React.FC<CustomerFormModalProps> = ({
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
+                    className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-900 ${
                       errors.phone ? 'border-red-300' : ''
                     }`}
                     placeholder={t('customers.form.phonePlaceholder')}
@@ -242,7 +242,7 @@ const CustomerFormModal: React.FC<CustomerFormModalProps> = ({
                     rows={3}
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-900"
                     placeholder={t('customers.form.addressPlaceholder')}
                   />
                 </div>
