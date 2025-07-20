@@ -196,3 +196,60 @@ export const formatForExport = (data: any[], columns: Array<{ key: string; label
     return formattedRow
   })
 } 
+
+// Color utility functions for consistent UI theming
+export const getTransactionTypeColor = (type: string): string => {
+  switch (type) {
+    case 'payment':
+      return 'bg-green-100 text-green-800';
+    case 'charge':
+      return 'bg-red-100 text-red-800';
+    case 'adjustment':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'refund':
+      return 'bg-blue-100 text-blue-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
+
+export const getTransactionTypeTextColor = (type: string): string => {
+  switch (type) {
+    case 'payment':
+      return 'text-green-600';
+    case 'charge':
+      return 'text-red-600';
+    case 'adjustment':
+      return 'text-yellow-600';
+    case 'refund':
+      return 'text-blue-600';
+    default:
+      return 'text-gray-600';
+  }
+};
+
+export const getBalanceColor = (balance: number): string => {
+  if (balance < 0) {
+    return 'text-red-600';
+  } else if (balance > 0) {
+    return 'text-green-600';
+  }
+  return 'text-gray-600';
+};
+
+export const getStatusColor = (isActive: boolean): string => {
+  return isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+};
+
+// Dynamic class generation utilities
+export const combineClasses = (...classes: (string | undefined | null | false)[]): string => {
+  return classes.filter(Boolean).join(' ');
+};
+
+export const getConditionalClass = (condition: boolean, trueClass: string, falseClass: string = ''): string => {
+  return condition ? trueClass : falseClass;
+};
+
+export const getResponsiveClass = (base: string, sm?: string, md?: string, lg?: string, xl?: string): string => {
+  return combineClasses(base, sm && `sm:${sm}`, md && `md:${md}`, lg && `lg:${lg}`, xl && `xl:${xl}`);
+}; 

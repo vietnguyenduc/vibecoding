@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Customer } from '../../../types';
 import { formatCurrency, formatDate } from '../../../utils/formatting';
 
@@ -15,6 +16,7 @@ const TopCustomers: React.FC<TopCustomersProps> = ({
   onMaxItemsChange
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   if (!customers || customers.length === 0) {
     return (
@@ -32,22 +34,22 @@ const TopCustomers: React.FC<TopCustomersProps> = ({
       {onMaxItemsChange && (
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm text-gray-600">
-            {t('dashboard.showingFirstN', { count: maxItems, total: customers.length })}
+            Hiển thị {maxItems}/{customers.length}
           </span>
           <div className="relative">
             <select
               value={maxItems}
-              onChange={(e) => onMaxItemsChange(Number(e.target.value))}
-              className="appearance-none text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 pr-8 text-gray-900"
-              style={{
-                color: '#111827',
-                backgroundColor: '#ffffff'
+              onChange={(e) => {
+                const newValue = Number(e.target.value);
+                console.log('Changing maxItems from', maxItems, 'to', newValue);
+                onMaxItemsChange(newValue);
               }}
+              className="appearance-none text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 pr-8 text-gray-900 cursor-pointer"
             >
-              <option value={5} style={{ color: '#111827', backgroundColor: '#ffffff' }}>5</option>
-              <option value={10} style={{ color: '#111827', backgroundColor: '#ffffff' }}>10</option>
-              <option value={15} style={{ color: '#111827', backgroundColor: '#ffffff' }}>15</option>
-              <option value={20} style={{ color: '#111827', backgroundColor: '#ffffff' }}>20</option>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={15}>15</option>
+              <option value={20}>20</option>
             </select>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +64,8 @@ const TopCustomers: React.FC<TopCustomersProps> = ({
         {displayCustomers.map((customer, index) => (
           <div
             key={customer.id}
-            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            onClick={() => navigate(`/customers/${customer.id}`)}
           >
             <div className="flex items-center space-x-3">
               <div className="flex-shrink-0">
@@ -109,7 +112,7 @@ const TopCustomers: React.FC<TopCustomersProps> = ({
         {customers.length > maxItems && !onMaxItemsChange && (
           <div className="text-center pt-2">
             <p className="text-sm text-gray-500">
-              {t('dashboard.showingFirstN', { count: maxItems, total: customers.length })}
+              Hiển thị {maxItems}/{customers.length} khách hàng
             </p>
           </div>
         )}

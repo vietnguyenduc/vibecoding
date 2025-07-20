@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Transaction } from '../../../types';
-import { formatCurrency, formatDate } from '../../../utils/formatting';
+import { formatCurrency } from '../../../utils/formatting';
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
@@ -72,22 +72,22 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
       {onMaxItemsChange && (
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm text-gray-600">
-            {t('dashboard.showingFirstN', { count: maxItems, total: transactions.length })}
+            Hiển thị {maxItems}/{transactions.length}
           </span>
           <div className="relative">
             <select
               value={maxItems}
-              onChange={(e) => onMaxItemsChange(Number(e.target.value))}
-              className="appearance-none text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 pr-8 text-gray-900"
-              style={{
-                color: '#111827',
-                backgroundColor: '#ffffff'
+              onChange={(e) => {
+                const newValue = Number(e.target.value);
+                console.log('Changing maxItems from', maxItems, 'to', newValue);
+                onMaxItemsChange(newValue);
               }}
+              className="appearance-none text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 pr-8 text-gray-900 cursor-pointer"
             >
-              <option value={5} style={{ color: '#111827', backgroundColor: '#ffffff' }}>5</option>
-              <option value={10} style={{ color: '#111827', backgroundColor: '#ffffff' }}>10</option>
-              <option value={15} style={{ color: '#111827', backgroundColor: '#ffffff' }}>15</option>
-              <option value={20} style={{ color: '#111827', backgroundColor: '#ffffff' }}>20</option>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={15}>15</option>
+              <option value={20}>20</option>
             </select>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,15 +104,16 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
             key={transaction.id}
             className="grid grid-cols-[auto_1fr_auto] gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            {/* Transaction Type Badge - Fixed Width */}
+            {/* Date - Apple Style - Fixed Width */}
             <div className="w-20 flex justify-center">
-              <span
-                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getTransactionTypeColor(
-                  transaction.transaction_type
-                )}`}
-              >
-                {getTransactionTypeLabel(transaction.transaction_type)}
-              </span>
+              <div className="text-center">
+                <div className="text-lg font-bold text-gray-900 leading-none">
+                  {new Date(transaction.transaction_date).getDate()}
+                </div>
+                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                  {new Date(transaction.transaction_date).toLocaleDateString('vi-VN', { month: 'short' })}
+                </div>
+              </div>
             </div>
             
             {/* Transaction Content - Flexible Width */}
@@ -125,18 +126,24 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
               </p>
             </div>
             
-            {/* Amount and Date - Fixed Width */}
+            {/* Amount and Transaction Type - Fixed Width */}
             <div className="w-32 text-right">
               <p
                 className={`text-sm font-bold ${
-                  transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                  transaction.transaction_type === 'payment' ? 'text-green-600' : 'text-red-600'
                 }`}
               >
                 {formatCurrency(transaction.amount)}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {formatDate(transaction.transaction_date)}
-              </p>
+              <div className="mt-1 flex justify-end">
+                <span
+                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${getTransactionTypeColor(
+                    transaction.transaction_type
+                  )}`}
+                >
+                  {getTransactionTypeLabel(transaction.transaction_type)}
+                </span>
+              </div>
             </div>
           </div>
         ))}
@@ -144,7 +151,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
         {transactions.length > maxItems && !onMaxItemsChange && (
           <div className="text-center pt-2">
             <p className="text-sm text-gray-500">
-              {t('dashboard.showingFirstN', { count: maxItems, total: transactions.length })}
+              Hiển thị {maxItems}/{transactions.length} giao dịch
             </p>
           </div>
         )}

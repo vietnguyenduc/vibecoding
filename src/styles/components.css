@@ -1,5 +1,29 @@
 /* Business UI Component Styles */
 
+/* Accessibility Improvements */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Ensure minimum touch target size for mobile */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
 /* Card Components */
 .card-base {
   @apply bg-white rounded-lg shadow-soft border border-business-border-light;
@@ -15,7 +39,7 @@
 
 /* Button Components */
 .btn {
-  @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-target;
 }
 
 .btn-primary {
@@ -52,7 +76,7 @@
 
 /* Form Components */
 .form-input {
-  @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm;
+  @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm touch-target;
 }
 
 .form-input-error {
@@ -152,7 +176,7 @@
 
 /* Modal Components */
 .modal-overlay {
-  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[200];
 }
 
 .modal-content {
@@ -173,7 +197,7 @@
 
 /* Navigation Components */
 .nav-item {
-  @apply flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150;
+  @apply flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 touch-target;
 }
 
 .nav-item-active {
@@ -240,6 +264,37 @@
   @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
 }
 
+/* Progress Bar */
+.progress-bar {
+  @apply w-full bg-gray-200 rounded-full h-2 overflow-hidden;
+}
+
+.progress-fill {
+  @apply h-full bg-primary-600 rounded-full transition-all duration-300 ease-out;
+}
+
+/* Dropdown Improvements */
+.dropdown-menu {
+  @apply absolute z-50 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-200 py-1;
+}
+
+.dropdown-item {
+  @apply block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer touch-target;
+}
+
+/* Chart Legend */
+.chart-legend {
+  @apply flex items-center justify-center space-x-6 mb-2 text-xs text-gray-600;
+}
+
+.legend-item {
+  @apply flex items-center space-x-2;
+}
+
+.legend-color {
+  @apply w-3 h-3 rounded;
+}
+
 /* Print Styles */
 @media print {
   .no-print {
@@ -255,17 +310,26 @@
   }
 }
 
-/* Dark Mode Support (if needed) */
-@media (prefers-color-scheme: dark) {
-  .dark-mode {
-    @apply bg-gray-900 text-white;
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn {
+    @apply border-2;
   }
   
-  .dark-mode .card-base {
-    @apply bg-gray-800 border-gray-700;
+  .form-input {
+    @apply border-2;
   }
   
-  .dark-mode .form-input {
-    @apply bg-gray-800 border-gray-600 text-white;
+  .card-base {
+    @apply border-2;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 } 

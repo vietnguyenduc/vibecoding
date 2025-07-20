@@ -20,11 +20,11 @@ const Layout: React.FC = () => {
       )}
       <div className="flex w-full">
         {/* Desktop sidebar - sticky */}
-        <div className="hidden lg:block w-64 flex-shrink-0 sticky top-16 h-screen overflow-y-auto">
+        <div className="hidden lg:block w-64 flex-shrink-0 sticky top-16 h-screen overflow-y-auto no-scrollbar">
           <Sidebar />
         </div>
         {/* Mobile sidebar */}
-        <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden ${
+        <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden no-scrollbar overflow-y-auto ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
           <Sidebar onClose={() => setSidebarOpen(false)} />

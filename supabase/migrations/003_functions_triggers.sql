@@ -9,21 +9,56 @@ BEGIN
     IF TG_OP = 'INSERT' THEN
         UPDATE public.customers 
         SET 
-            total_balance = total_balance + NEW.amount,
+            total_balance = total_balance + 
+                CASE 
+                    WHEN NEW.transaction_type = 'payment' THEN -NEW.amount  -- Payment reduces debt
+                    WHEN NEW.transaction_type = 'charge' THEN NEW.amount    -- Charge increases debt
+                    WHEN NEW.transaction_type = 'adjustment' THEN NEW.amount -- Adjustment can be positive/negative
+                    WHEN NEW.transaction_type = 'refund' THEN -NEW.amount   -- Refund reduces debt
+                    ELSE 0
+                END,
             last_transaction_date = NEW.transaction_date
         WHERE id = NEW.customer_id;
         RETURN NEW;
     ELSIF TG_OP = 'UPDATE' THEN
+        -- First, reverse the old transaction
         UPDATE public.customers 
         SET 
-            total_balance = total_balance - OLD.amount + NEW.amount,
+            total_balance = total_balance - 
+                CASE 
+                    WHEN OLD.transaction_type = 'payment' THEN -OLD.amount  -- Reverse payment
+                    WHEN OLD.transaction_type = 'charge' THEN OLD.amount    -- Reverse charge
+                    WHEN OLD.transaction_type = 'adjustment' THEN OLD.amount -- Reverse adjustment
+                    WHEN OLD.transaction_type = 'refund' THEN -OLD.amount   -- Reverse refund
+                    ELSE 0
+                END
+        WHERE id = OLD.customer_id;
+        
+        -- Then, apply the new transaction
+        UPDATE public.customers 
+        SET 
+            total_balance = total_balance + 
+                CASE 
+                    WHEN NEW.transaction_type = 'payment' THEN -NEW.amount  -- Payment reduces debt
+                    WHEN NEW.transaction_type = 'charge' THEN NEW.amount    -- Charge increases debt
+                    WHEN NEW.transaction_type = 'adjustment' THEN NEW.amount -- Adjustment can be positive/negative
+                    WHEN NEW.transaction_type = 'refund' THEN -NEW.amount   -- Refund reduces debt
+                    ELSE 0
+                END,
             last_transaction_date = NEW.transaction_date
         WHERE id = NEW.customer_id;
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
         UPDATE public.customers 
         SET 
-            total_balance = total_balance - OLD.amount
+            total_balance = total_balance - 
+                CASE 
+                    WHEN OLD.transaction_type = 'payment' THEN -OLD.amount  -- Reverse payment
+                    WHEN OLD.transaction_type = 'charge' THEN OLD.amount    -- Reverse charge
+                    WHEN OLD.transaction_type = 'adjustment' THEN OLD.amount -- Reverse adjustment
+                    WHEN OLD.transaction_type = 'refund' THEN -OLD.amount   -- Reverse refund
+                    ELSE 0
+                END
         WHERE id = OLD.customer_id;
         RETURN OLD;
     END IF;
@@ -37,17 +72,51 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         UPDATE public.bank_accounts 
-        SET balance = balance + NEW.amount
+        SET balance = balance + 
+            CASE 
+                WHEN NEW.transaction_type = 'payment' THEN NEW.amount  -- Payment increases bank balance
+                WHEN NEW.transaction_type = 'charge' THEN -NEW.amount  -- Charge decreases bank balance
+                WHEN NEW.transaction_type = 'adjustment' THEN NEW.amount -- Adjustment can be positive/negative
+                WHEN NEW.transaction_type = 'refund' THEN NEW.amount   -- Refund increases bank balance
+                ELSE 0
+            END
         WHERE id = NEW.bank_account_id;
         RETURN NEW;
     ELSIF TG_OP = 'UPDATE' THEN
+        -- First, reverse the old transaction
         UPDATE public.bank_accounts 
-        SET balance = balance - OLD.amount + NEW.amount
+        SET balance = balance - 
+            CASE 
+                WHEN OLD.transaction_type = 'payment' THEN OLD.amount  -- Reverse payment
+                WHEN OLD.transaction_type = 'charge' THEN -OLD.amount  -- Reverse charge
+                WHEN OLD.transaction_type = 'adjustment' THEN OLD.amount -- Reverse adjustment
+                WHEN OLD.transaction_type = 'refund' THEN OLD.amount   -- Reverse refund
+                ELSE 0
+            END
+        WHERE id = OLD.bank_account_id;
+        
+        -- Then, apply the new transaction
+        UPDATE public.bank_accounts 
+        SET balance = balance + 
+            CASE 
+                WHEN NEW.transaction_type = 'payment' THEN NEW.amount  -- Payment increases bank balance
+                WHEN NEW.transaction_type = 'charge' THEN -NEW.amount  -- Charge decreases bank balance
+                WHEN NEW.transaction_type = 'adjustment' THEN NEW.amount -- Adjustment can be positive/negative
+                WHEN NEW.transaction_type = 'refund' THEN NEW.amount   -- Refund increases bank balance
+                ELSE 0
+            END
         WHERE id = NEW.bank_account_id;
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
         UPDATE public.bank_accounts 
-        SET balance = balance - OLD.amount
+        SET balance = balance - 
+            CASE 
+                WHEN OLD.transaction_type = 'payment' THEN OLD.amount  -- Reverse payment
+                WHEN OLD.transaction_type = 'charge' THEN -OLD.amount  -- Reverse charge
+                WHEN OLD.transaction_type = 'adjustment' THEN OLD.amount -- Reverse adjustment
+                WHEN OLD.transaction_type = 'refund' THEN OLD.amount   -- Reverse refund
+                ELSE 0
+            END
         WHERE id = OLD.bank_account_id;
         RETURN OLD;
     END IF;

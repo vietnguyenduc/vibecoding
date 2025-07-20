@@ -204,17 +204,17 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data, timeRange }) => {
   return (
     <div className="w-full h-64">
       {/* Legend */}
-      <div className="flex items-center justify-center space-x-6 mb-2 text-xs text-gray-600">
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: '#bdbdbd' }}></div>
+      <div className="chart-legend">
+        <div className="legend-item">
+          <div className="legend-color bg-gray-400"></div>
           <span>Số dư</span>
         </div>
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: '#92cf9a' }}></div>
+        <div className="legend-item">
+          <div className="legend-color bg-green-400"></div>
           <span>Tăng (thu {'>'} chi)</span>
         </div>
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: '#ed6455' }}></div>
+        <div className="legend-item">
+          <div className="legend-color bg-red-400"></div>
           <span>Giảm (thu {'<'} chi)</span>
         </div>
       </div>

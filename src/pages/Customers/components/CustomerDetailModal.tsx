@@ -78,17 +78,22 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   const getStatusBadge = (isActive: boolean) => {
     return isActive ? (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-        {t('customers.status.active')}
+        Hoạt động
       </span>
     ) : (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-        {t('customers.status.inactive')}
+        Không hoạt động
       </span>
     );
   };
 
+  // Tính tổng số tiền mua hàng từ các giao dịch loại 'charge' (tiền ra)
+  const totalPurchaseAmount = transactions
+    .filter(transaction => transaction.transaction_type === 'charge')
+    .reduce((sum, transaction) => sum + Math.abs(transaction.amount), 0);
+
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-[200] overflow-y-auto">
       <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose} />
 
@@ -98,10 +103,10 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  {t('customers.detail.title')}
+                  Chi tiết khách hàng
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">
-                  {t('customers.detail.subtitle')}
+                  Xem thông tin chi tiết và lịch sử giao dịch
                 </p>
               </div>
               <div className="flex items-center space-x-2">
@@ -112,13 +117,13 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  {t('customers.detail.edit')}
+                  Chỉnh sửa
                 </button>
                 <button
                   onClick={onClose}
                   className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  {t('common.close')}
+                  Đóng
                 </button>
               </div>
             </div>
@@ -127,20 +132,20 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
               {/* Customer Information */}
               <div>
                 <h4 className="text-lg font-medium text-gray-900 mb-4">
-                  {t('customers.detail.information')}
+                  Thông tin khách hàng
                 </h4>
                 
                 <dl className="space-y-4">
                   <div>
                     <dt className="text-sm font-medium text-gray-500">
-                      {t('customers.detail.customerCode')}
+                      Mã khách hàng
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900">{customer.customer_code}</dd>
                   </div>
                   
                   <div>
                     <dt className="text-sm font-medium text-gray-500">
-                      {t('customers.detail.fullName')}
+                      Họ và tên
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900">{customer.full_name}</dd>
                   </div>
@@ -148,7 +153,7 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   {customer.email && (
                     <div>
                       <dt className="text-sm font-medium text-gray-500">
-                        {t('customers.detail.email')}
+                        Email
                       </dt>
                       <dd className="mt-1 text-sm text-gray-900">{customer.email}</dd>
                     </div>
@@ -157,7 +162,7 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   {customer.phone && (
                     <div>
                       <dt className="text-sm font-medium text-gray-500">
-                        {t('customers.detail.phone')}
+                        Số điện thoại
                       </dt>
                       <dd className="mt-1 text-sm text-gray-900">
                         {formatPhoneNumber(customer.phone)}
@@ -168,7 +173,7 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   {customer.address && (
                     <div>
                       <dt className="text-sm font-medium text-gray-500">
-                        {t('customers.detail.address')}
+                        Địa chỉ
                       </dt>
                       <dd className="mt-1 text-sm text-gray-900">{customer.address}</dd>
                     </div>
@@ -176,14 +181,14 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   
                   <div>
                     <dt className="text-sm font-medium text-gray-500">
-                      {t('customers.detail.status')}
+                      Trạng thái
                     </dt>
                     <dd className="mt-1">{getStatusBadge(customer.is_active)}</dd>
                   </div>
                   
                   <div>
                     <dt className="text-sm font-medium text-gray-500">
-                      {t('customers.detail.createdAt')}
+                      Ngày tạo
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900">
                       {formatDate(customer.created_at)}
@@ -195,13 +200,13 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
               {/* Financial Summary */}
               <div>
                 <h4 className="text-lg font-medium text-gray-900 mb-4">
-                  {t('customers.detail.financialSummary')}
+                  Tóm tắt tài chính
                 </h4>
                 
                 <dl className="space-y-4">
                   <div>
                     <dt className="text-sm font-medium text-gray-500">
-                      {t('customers.detail.totalBalance')}
+                      Công nợ hiện tại
                     </dt>
                     <dd className={`mt-1 text-2xl font-bold ${
                       customer.total_balance < 0 ? 'text-red-600' : 'text-green-600'
@@ -212,18 +217,27 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   
                   <div>
                     <dt className="text-sm font-medium text-gray-500">
-                      {t('customers.detail.lastTransaction')}
+                      Tổng số tiền mua hàng
                     </dt>
-                    <dd className="mt-1 text-sm text-gray-900">
-                      {customer.last_transaction_date
-                        ? formatDate(customer.last_transaction_date)
-                        : t('customers.detail.noTransactions')}
+                    <dd className="mt-1 text-lg font-semibold text-blue-600">
+                      {formatCurrency(totalPurchaseAmount)}
                     </dd>
                   </div>
                   
                   <div>
                     <dt className="text-sm font-medium text-gray-500">
-                      {t('customers.detail.totalTransactions')}
+                      Giao dịch cuối
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900">
+                      {customer.last_transaction_date
+                        ? formatDate(customer.last_transaction_date)
+                        : 'Không có giao dịch'}
+                    </dd>
+                  </div>
+                  
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">
+                      Tổng giao dịch
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900">
                       {transactions.length}
@@ -236,7 +250,7 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
             {/* Transaction History */}
             <div className="mt-8">
               <h4 className="text-lg font-medium text-gray-900 mb-4">
-                {t('customers.detail.transactionHistory')}
+                Lịch sử giao dịch
               </h4>
               
               {loading ? (
@@ -261,16 +275,16 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                     <thead className="bg-gray-50">
                       <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          {t('customers.detail.transactions.date')}
+                          Ngày
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          {t('customers.detail.transactions.type')}
+                          Loại
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          {t('customers.detail.transactions.amount')}
+                          Số tiền
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          {t('customers.detail.transactions.description')}
+                          Mô tả
                         </th>
                       </tr>
                     </thead>
@@ -286,7 +300,7 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            <span className={transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}>
+                            <span className={transaction.transaction_type === 'charge' ? 'text-red-600' : 'text-green-600'}>
                               {formatCurrency(transaction.amount)}
                             </span>
                           </td>

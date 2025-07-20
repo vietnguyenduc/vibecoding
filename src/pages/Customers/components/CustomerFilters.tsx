@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import Button from '../../../components/UI/Button';
 
 interface CustomerFiltersProps {
   dateRange: { start: string; end: string } | null;
@@ -11,9 +12,9 @@ const CustomerFilters: React.FC<CustomerFiltersProps> = ({
   dateRange,
   onDateRangeChange,
 }) => {
-  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -92,11 +93,20 @@ const CustomerFilters: React.FC<CustomerFiltersProps> = ({
     return `${startDate} - ${endDate}`;
   };
 
+  const handleReset = () => {
+    clearFilters();
+    setIsOpen(false);
+  };
+
+  const handleApply = () => {
+    setIsOpen(false);
+  };
+
   return (
     <div className="flex flex-wrap gap-4 items-center">
       {/* Date Range Filter */}
       <div className="relative" ref={dropdownRef}>
-        <button
+        <Button
           onClick={() => setIsOpen(!isOpen)}
           className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
         >
@@ -127,7 +137,7 @@ const CustomerFilters: React.FC<CustomerFiltersProps> = ({
               d="M19 9l-7 7-7-7"
             />
           </svg>
-        </button>
+        </Button>
 
         {isOpen && (
           <div className="absolute z-10 mt-2 w-80 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
@@ -138,36 +148,36 @@ const CustomerFilters: React.FC<CustomerFiltersProps> = ({
               
               {/* Quick Date Options */}
               <div className="grid grid-cols-2 gap-2 mb-4">
-                <button
+                <Button
                   onClick={() => handleQuickDateSelect('today')}
                   className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors"
                 >
                   Hôm nay
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => handleQuickDateSelect('week')}
                   className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors"
                 >
                   Tuần trước
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => handleQuickDateSelect('month')}
                   className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors"
                 >
                   Tháng này
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => handleQuickDateSelect('quarter')}
                   className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors"
                 >
                   Quý này
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => handleQuickDateSelect('year')}
                   className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors"
                 >
                   Năm nay
-                </button>
+                </Button>
               </div>
 
               {/* Custom Date Range */}
@@ -198,19 +208,21 @@ const CustomerFilters: React.FC<CustomerFiltersProps> = ({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-between mt-4 pt-3 border-t border-gray-200">
-                <button
-                  onClick={clearFilters}
-                  className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+              <div className="flex justify-between items-center">
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={handleReset}
                 >
-                  Xóa
-                </button>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  {t('common.reset')}
+                </Button>
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={handleApply}
                 >
-                  Áp dụng
-                </button>
+                  {t('common.apply')}
+                </Button>
               </div>
             </div>
           </div>

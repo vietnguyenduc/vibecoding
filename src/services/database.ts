@@ -13,7 +13,7 @@ export const customerService = {
           email: 'info@abc.com.vn',
           address: '123 Đường Nguyễn Huệ, Quận 1, TP.HCM',
           branch_id: null,
-          total_balance: 15000000,
+          total_balance: -85000000,  // Nợ 85 triệu VND
           last_transaction_date: '2024-01-28T14:30:00Z',
           is_active: true,
           created_at: '2024-01-01T00:00:00Z',
@@ -27,7 +27,7 @@ export const customerService = {
           email: 'contact@xyz.com.vn',
           address: '456 Đường Lê Lợi, Quận 3, TP.HCM',
           branch_id: null,
-          total_balance: -25000000,
+          total_balance: -72000000,  // Nợ 72 triệu VND
           last_transaction_date: '2024-01-28T10:15:00Z',
           is_active: true,
           created_at: '2024-01-02T00:00:00Z',
@@ -41,7 +41,7 @@ export const customerService = {
           email: 'hello@def.com.vn',
           address: '789 Đường Võ Văn Tần, Quận 7, TP.HCM',
           branch_id: null,
-          total_balance: 8000000,
+          total_balance: -65000000,  // Nợ 65 triệu VND
           last_transaction_date: '2024-01-28T09:45:00Z',
           is_active: true,
           created_at: '2024-01-03T00:00:00Z',
@@ -55,7 +55,7 @@ export const customerService = {
           email: 'info@ghi.com.vn',
           address: '321 Đường Trần Hưng Đạo, Quận 1, TP.HCM',
           branch_id: null,
-          total_balance: -18000000,
+          total_balance: -58000000,  // Nợ 58 triệu VND
           last_transaction_date: '2024-01-27T16:20:00Z',
           is_active: true,
           created_at: '2024-01-04T00:00:00Z',
@@ -69,7 +69,7 @@ export const customerService = {
           email: 'contact@jkl.com.vn',
           address: '654 Đường Hai Bà Trưng, Quận 1, TP.HCM',
           branch_id: null,
-          total_balance: 12000000,
+          total_balance: -52000000,  // Nợ 52 triệu VND
           last_transaction_date: '2024-01-27T13:10:00Z',
           is_active: false,
           created_at: '2024-01-05T00:00:00Z',
@@ -83,7 +83,7 @@ export const customerService = {
           email: 'hello@mno.com.vn',
           address: '987 Đường Pasteur, Quận 3, TP.HCM',
           branch_id: null,
-          total_balance: -5000000,
+          total_balance: -45000000,  // Nợ 45 triệu VND
           last_transaction_date: '2024-01-26T11:30:00Z',
           is_active: true,
           created_at: '2024-01-06T00:00:00Z',
@@ -97,7 +97,7 @@ export const customerService = {
           email: 'info@pqr.com.vn',
           address: '147 Đường Điện Biên Phủ, Quận 7, TP.HCM',
           branch_id: null,
-          total_balance: 3000000,
+          total_balance: -38000000,  // Nợ 38 triệu VND
           last_transaction_date: '2024-01-26T09:15:00Z',
           is_active: true,
           created_at: '2024-01-07T00:00:00Z',
@@ -111,7 +111,7 @@ export const customerService = {
           email: 'contact@stu.com.vn',
           address: '258 Đường Cách Mạng Tháng 8, Quận 1, TP.HCM',
           branch_id: null,
-          total_balance: -22000000,
+          total_balance: -32000000,  // Nợ 32 triệu VND
           last_transaction_date: '2024-01-25T15:45:00Z',
           is_active: true,
           created_at: '2024-01-08T00:00:00Z',
@@ -122,22 +122,134 @@ export const customerService = {
       count: 8,
     };
   },
-  async getCustomerById(_id: string) {
-    return {
-      data: {
+  async getCustomerById(id: string) {
+    // Mock data for different customers
+    const customers = {
+      '1': {
         id: '1',
         customer_code: 'CUST0001',
-        full_name: 'Test Customer',
+        full_name: 'Công ty TNHH ABC',
         phone: '0123456789',
-        email: 'test@customer.com',
-        address: '123 Main St',
-        branch_id: '1',
-        total_balance: 1000,
-        last_transaction_date: '2024-01-01T00:00:00Z',
+        email: 'info@abc.com.vn',
+        address: '123 Đường Nguyễn Huệ, Quận 1, TP.HCM',
+        branch_id: null,
+        total_balance: -85000000,  // Nợ 85 triệu VND
+        last_transaction_date: '2024-01-28T14:30:00Z',
         is_active: true,
         created_at: '2024-01-01T00:00:00Z',
         updated_at: '2024-01-01T00:00:00Z',
       },
+      '2': {
+        id: '2',
+        customer_code: 'CUST0002',
+        full_name: 'Công ty CP XYZ',
+        phone: '0987654321',
+        email: 'contact@xyz.com.vn',
+        address: '456 Đường Lê Lợi, Quận 3, TP.HCM',
+        branch_id: null,
+        total_balance: -72000000,  // Nợ 72 triệu VND
+        last_transaction_date: '2024-01-28T10:15:00Z',
+        is_active: true,
+        created_at: '2024-01-02T00:00:00Z',
+        updated_at: '2024-01-02T00:00:00Z',
+      },
+      '3': {
+        id: '3',
+        customer_code: 'CUST0003',
+        full_name: 'Công ty TNHH DEF',
+        phone: '0369852147',
+        email: 'hello@def.com.vn',
+        address: '789 Đường Võ Văn Tần, Quận 7, TP.HCM',
+        branch_id: null,
+        total_balance: -65000000,  // Nợ 65 triệu VND
+        last_transaction_date: '2024-01-28T09:45:00Z',
+        is_active: true,
+        created_at: '2024-01-03T00:00:00Z',
+        updated_at: '2024-01-03T00:00:00Z',
+      },
+      '4': {
+        id: '4',
+        customer_code: 'CUST0004',
+        full_name: 'Công ty CP GHI',
+        phone: '0521478963',
+        email: 'info@ghi.com.vn',
+        address: '321 Đường Trần Hưng Đạo, Quận 1, TP.HCM',
+        branch_id: null,
+        total_balance: -58000000,  // Nợ 58 triệu VND
+        last_transaction_date: '2024-01-27T16:20:00Z',
+        is_active: true,
+        created_at: '2024-01-04T00:00:00Z',
+        updated_at: '2024-01-04T00:00:00Z',
+      },
+      '5': {
+        id: '5',
+        customer_code: 'CUST0005',
+        full_name: 'Công ty TNHH JKL',
+        phone: '0741236985',
+        email: 'contact@jkl.com.vn',
+        address: '654 Đường Hai Bà Trưng, Quận 1, TP.HCM',
+        branch_id: null,
+        total_balance: -52000000,  // Nợ 52 triệu VND
+        last_transaction_date: '2024-01-27T13:10:00Z',
+        is_active: false,
+        created_at: '2024-01-05T00:00:00Z',
+        updated_at: '2024-01-05T00:00:00Z',
+      },
+      '6': {
+        id: '6',
+        customer_code: 'CUST0006',
+        full_name: 'Công ty CP MNO',
+        phone: '0963258741',
+        email: 'hello@mno.com.vn',
+        address: '987 Đường Pasteur, Quận 3, TP.HCM',
+        branch_id: null,
+        total_balance: -45000000,  // Nợ 45 triệu VND
+        last_transaction_date: '2024-01-26T11:30:00Z',
+        is_active: true,
+        created_at: '2024-01-06T00:00:00Z',
+        updated_at: '2024-01-06T00:00:00Z',
+      },
+      '7': {
+        id: '7',
+        customer_code: 'CUST0007',
+        full_name: 'Công ty TNHH PQR',
+        phone: '0147852369',
+        email: 'info@pqr.com.vn',
+        address: '147 Đường Điện Biên Phủ, Quận 7, TP.HCM',
+        branch_id: null,
+        total_balance: -38000000,  // Nợ 38 triệu VND
+        last_transaction_date: '2024-01-26T09:15:00Z',
+        is_active: true,
+        created_at: '2024-01-07T00:00:00Z',
+        updated_at: '2024-01-07T00:00:00Z',
+      },
+      '8': {
+        id: '8',
+        customer_code: 'CUST0008',
+        full_name: 'Công ty CP STU',
+        phone: '0321654987',
+        email: 'contact@stu.com.vn',
+        address: '258 Đường Cách Mạng Tháng 8, Quận 1, TP.HCM',
+        branch_id: null,
+        total_balance: -32000000,  // Nợ 32 triệu VND
+        last_transaction_date: '2024-01-25T15:45:00Z',
+        is_active: true,
+        created_at: '2024-01-08T00:00:00Z',
+        updated_at: '2024-01-08T00:00:00Z',
+      },
+    };
+
+    const customer = customers[id as keyof typeof customers];
+    
+    if (!customer) {
+      return {
+        data: null,
+        error: 'Customer not found',
+      };
+    }
+
+    return {
+      data: customer,
       error: null,
     };
   },
@@ -358,11 +470,55 @@ export const bankAccountService = {
       data: [
         {
           id: '1',
-          account_number: '123456',
-          account_name: 'Test Bank',
-          bank_name: 'Test Bank',
+          account_number: '1234567890',
+          account_name: 'Tài khoản chính',
+          bank_name: 'Vietcombank',
           branch_id: '1',
-          balance: 1000,
+          balance: 150000000, // 150 triệu VND
+          is_active: true,
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+        },
+        {
+          id: '2',
+          account_number: '0987654321',
+          account_name: 'Tài khoản thanh toán',
+          bank_name: 'BIDV',
+          branch_id: '1',
+          balance: 85000000, // 85 triệu VND
+          is_active: true,
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+        },
+        {
+          id: '3',
+          account_number: '1122334455',
+          account_name: 'Tài khoản tiết kiệm',
+          bank_name: 'Techcombank',
+          branch_id: '1',
+          balance: 200000000, // 200 triệu VND
+          is_active: true,
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+        },
+        {
+          id: '4',
+          account_number: '5566778899',
+          account_name: 'Tài khoản vốn lưu động',
+          bank_name: 'ACB',
+          branch_id: '2',
+          balance: 75000000, // 75 triệu VND
+          is_active: true,
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+        },
+        {
+          id: '5',
+          account_number: '9988776655',
+          account_name: 'Tài khoản dự phòng',
+          bank_name: 'MB Bank',
+          branch_id: '3',
+          balance: 50000000, // 50 triệu VND
           is_active: true,
           created_at: '2024-01-01T00:00:00Z',
           updated_at: '2024-01-01T00:00:00Z',
@@ -562,22 +718,22 @@ export const dashboardService = {
       year: debtAmounts.year - previousDebtAmounts.year
     };
 
-    // Mock outstanding balance by time range
+    // Mock outstanding balance by time range (tổng công nợ hiện tại)
     const outstandingBalances = {
-      day: 1000,
-      week: 1200,
-      month: 1500,
-      quarter: 2000,
-      year: 2500
+      day: 150000000,    // 150 triệu VND (tổng nợ hiện tại)
+      week: 180000000,   // 180 triệu VND
+      month: 220000000,  // 220 triệu VND
+      quarter: 280000000, // 280 triệu VND
+      year: 350000000    // 350 triệu VND
     };
 
     // Mock previous period outstanding balances
     const previousOutstandingBalances = {
-      day: 950,   // 950 VND ngày hôm trước
-      week: 1100, // 1100 VND tuần trước
-      month: 1400, // 1400 VND tháng trước
-      quarter: 1800, // 1800 VND quý trước
-      year: 2200   // 2200 VND năm trước
+      day: 145000000,   // 145 triệu VND ngày hôm trước
+      week: 170000000,  // 170 triệu VND tuần trước
+      month: 210000000, // 210 triệu VND tháng trước
+      quarter: 260000000, // 260 triệu VND quý trước
+      year: 320000000   // 320 triệu VND năm trước
     };
 
     // Calculate outstanding changes based on previous period
@@ -589,22 +745,22 @@ export const dashboardService = {
       year: outstandingBalances.year - previousOutstandingBalances.year
     };
 
-    // Mock active customers by time range
+    // Mock active customers by time range (số khách hàng unique có giao dịch trong kỳ)
     const activeCustomers = {
-      day: 1,
-      week: 2,
-      month: 3,
-      quarter: 4,
-      year: 5
+      day: 3,    // 3 khách hàng có giao dịch trong ngày
+      week: 6,   // 6 khách hàng có giao dịch trong tuần
+      month: 8,  // 8 khách hàng có giao dịch trong tháng
+      quarter: 8, // 8 khách hàng có giao dịch trong quý
+      year: 8    // 8 khách hàng có giao dịch trong năm
     };
 
     // Mock previous period active customers
     const previousActiveCustomers = {
-      day: 1,   // Giữ nguyên
-      week: 1,  // Tăng 1
-      month: 2, // Tăng 1
-      quarter: 3, // Tăng 1
-      year: 4   // Tăng 1
+      day: 2,   // 2 khách hàng ngày hôm trước
+      week: 5,  // 5 khách hàng tuần trước
+      month: 7, // 7 khách hàng tháng trước
+      quarter: 7, // 7 khách hàng quý trước
+      year: 7   // 7 khách hàng năm trước
     };
 
     // Calculate active customers changes based on previous period
@@ -740,6 +896,22 @@ export const dashboardService = {
       console.warn(`Total sum mismatch for ${timeRange}: branch sum = ${branchTotalSum}, transaction amount = ${transactionAmounts[timeRange]}`);
     }
 
+    // Mock số lượng giao dịch thu và cho nợ
+    const transactionPaymentCounts = {
+      day: 2,
+      week: 10,
+      month: 40,
+      quarter: 120,
+      year: 480
+    };
+    const transactionChargeCounts = {
+      day: 3,
+      week: 15,
+      month: 60,
+      quarter: 180,
+      year: 720
+    };
+
     return {
       data: {
         totalOutstanding: outstandingBalances[timeRange],
@@ -748,6 +920,8 @@ export const dashboardService = {
         activeCustomersChange: activeCustomersChanges[timeRange],
         transactionsInPeriod: transactionCounts[timeRange],
         transactionsInPeriodChange: transactionChanges[timeRange],
+        transactionPaymentCount: transactionPaymentCounts[timeRange],
+        transactionChargeCount: transactionChargeCounts[timeRange],
         transactionAmountsInPeriod: transactionAmounts[timeRange],
         transactionAmountsInPeriodChange: transactionAmountChanges[timeRange],
         transactionIncomeInPeriod: incomeAmounts[timeRange],
@@ -891,6 +1065,176 @@ export const dashboardService = {
             created_by: 'test-user',
             created_at: '2024-01-27T13:10:00Z',
             updated_at: '2024-01-27T13:10:00Z',
+          },
+          {
+            id: '6',
+            transaction_code: 'TXN0006',
+            customer_id: '6',
+            customer_name: 'Công ty CP MNO',
+            bank_account_id: '2',
+            bank_account_name: 'BIDV - TK Thanh toán',
+            branch_id: '2',
+            transaction_type: 'charge' as const,
+            amount: 30000000,
+            description: 'Cho vay mua thiết bị',
+            reference_number: 'REF006',
+            transaction_date: '2024-01-27T11:20:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-27T11:20:00Z',
+            updated_at: '2024-01-27T11:20:00Z',
+          },
+          {
+            id: '7',
+            transaction_code: 'TXN0007',
+            customer_id: '7',
+            customer_name: 'Công ty TNHH PQR',
+            bank_account_id: '3',
+            bank_account_name: 'Techcombank - TK Tiết kiệm',
+            branch_id: '2',
+            transaction_type: 'payment' as const,
+            amount: 22000000,
+            description: 'Thanh toán nợ tháng 12',
+            reference_number: 'REF007',
+            transaction_date: '2024-01-27T09:30:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-27T09:30:00Z',
+            updated_at: '2024-01-27T09:30:00Z',
+          },
+          {
+            id: '8',
+            transaction_code: 'TXN0008',
+            customer_id: '8',
+            customer_name: 'Công ty CP STU',
+            bank_account_id: '1',
+            bank_account_name: 'Vietcombank - TK Chính',
+            branch_id: '3',
+            transaction_type: 'charge' as const,
+            amount: 15000000,
+            description: 'Cho vay mua nguyên liệu',
+            reference_number: 'REF008',
+            transaction_date: '2024-01-26T15:45:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-26T15:45:00Z',
+            updated_at: '2024-01-26T15:45:00Z',
+          },
+          {
+            id: '9',
+            transaction_code: 'TXN0009',
+            customer_id: '9',
+            customer_name: 'Công ty TNHH VWX',
+            bank_account_id: '4',
+            bank_account_name: 'ACB - TK Vốn lưu động',
+            branch_id: '3',
+            transaction_type: 'payment' as const,
+            amount: 18000000,
+            description: 'Thanh toán một phần',
+            reference_number: 'REF009',
+            transaction_date: '2024-01-26T13:15:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-26T13:15:00Z',
+            updated_at: '2024-01-26T13:15:00Z',
+          },
+          {
+            id: '10',
+            transaction_code: 'TXN0010',
+            customer_id: '10',
+            customer_name: 'Công ty CP YZA',
+            bank_account_id: '2',
+            bank_account_name: 'BIDV - TK Thanh toán',
+            branch_id: '1',
+            transaction_type: 'charge' as const,
+            amount: 25000000,
+            description: 'Cho vay mua hàng',
+            reference_number: 'REF010',
+            transaction_date: '2024-01-26T10:00:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-26T10:00:00Z',
+            updated_at: '2024-01-26T10:00:00Z',
+          },
+          {
+            id: '11',
+            transaction_code: 'TXN0011',
+            customer_id: '1',
+            customer_name: 'Công ty TNHH ABC',
+            bank_account_id: '1',
+            bank_account_name: 'Vietcombank - TK Chính',
+            branch_id: '1',
+            transaction_type: 'payment' as const,
+            amount: 5000000,
+            description: 'Thanh toán nợ cũ',
+            reference_number: 'REF011',
+            transaction_date: '2024-01-25T16:30:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-25T16:30:00Z',
+            updated_at: '2024-01-25T16:30:00Z',
+          },
+          {
+            id: '12',
+            transaction_code: 'TXN0012',
+            customer_id: '2',
+            customer_name: 'Công ty CP XYZ',
+            bank_account_id: '2',
+            bank_account_name: 'BIDV - TK Thanh toán',
+            branch_id: '2',
+            transaction_type: 'charge' as const,
+            amount: 20000000,
+            description: 'Cho vay mua thiết bị',
+            reference_number: 'REF012',
+            transaction_date: '2024-01-25T14:20:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-25T14:20:00Z',
+            updated_at: '2024-01-25T14:20:00Z',
+          },
+          {
+            id: '13',
+            transaction_code: 'TXN0013',
+            customer_id: '3',
+            customer_name: 'Công ty TNHH DEF',
+            bank_account_id: '3',
+            bank_account_name: 'Techcombank - TK Tiết kiệm',
+            branch_id: '3',
+            transaction_type: 'payment' as const,
+            amount: 12000000,
+            description: 'Thanh toán nợ tháng 11',
+            reference_number: 'REF013',
+            transaction_date: '2024-01-25T11:45:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-25T11:45:00Z',
+            updated_at: '2024-01-25T11:45:00Z',
+          },
+          {
+            id: '14',
+            transaction_code: 'TXN0014',
+            customer_id: '4',
+            customer_name: 'Công ty CP GHI',
+            bank_account_id: '1',
+            bank_account_name: 'Vietcombank - TK Chính',
+            branch_id: '1',
+            transaction_type: 'charge' as const,
+            amount: 35000000,
+            description: 'Cho vay mua hàng',
+            reference_number: 'REF014',
+            transaction_date: '2024-01-25T09:15:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-25T09:15:00Z',
+            updated_at: '2024-01-25T09:15:00Z',
+          },
+          {
+            id: '15',
+            transaction_code: 'TXN0015',
+            customer_id: '5',
+            customer_name: 'Công ty TNHH JKL',
+            bank_account_id: '4',
+            bank_account_name: 'ACB - TK Vốn lưu động',
+            branch_id: '2',
+            transaction_type: 'payment' as const,
+            amount: 8000000,
+            description: 'Thanh toán một phần',
+            reference_number: 'REF015',
+            transaction_date: '2024-01-24T17:00:00Z',
+            created_by: 'test-user',
+            created_at: '2024-01-24T17:00:00Z',
+            updated_at: '2024-01-24T17:00:00Z',
           },
         ],
         topCustomers: [

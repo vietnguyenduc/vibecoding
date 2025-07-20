@@ -4,9 +4,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { databaseService } from '../../services/database';
 import { Transaction } from '../../types';
-import { formatCurrency, formatDate } from '../../utils/formatting';
+import { formatCurrency, formatDate, getTransactionTypeColor, getTransactionTypeTextColor } from '../../utils/formatting';
 import { LoadingFallback, ErrorFallback } from '../../components/UI/FallbackUI';
 import Pagination from '../../components/UI/Pagination';
+import TimeRangeFilter from '../../components/UI/TimeRangeFilter';
+import Button from '../../components/UI/Button';
 
 interface TransactionListState {
   transactions: Transaction[];
@@ -113,7 +115,7 @@ const TransactionList: React.FC = () => {
   const handleDateRangeChange = (start: string, end: string) => {
     setState(prev => ({
       ...prev,
-      dateRange: { start, end },
+      dateRange: start && end ? { start, end } : null,
       currentPage: 1,
     }));
   };
@@ -133,22 +135,6 @@ const TransactionList: React.FC = () => {
   };
 
   // Get transaction type color
-  const getTransactionTypeColor = (type: string) => {
-    switch (type) {
-      case 'payment':
-        return 'text-green-600 bg-green-100';
-      case 'charge':
-        return 'text-red-600 bg-red-100';
-      case 'adjustment':
-        return 'text-yellow-600 bg-yellow-100';
-      case 'refund':
-        return 'text-blue-600 bg-blue-100';
-      default:
-        return 'text-gray-600 bg-gray-100';
-    }
-  };
-
-  // Get transaction type label
   const getTransactionTypeLabel = (type: string) => {
     switch (type) {
       case 'payment':
@@ -226,7 +212,7 @@ const TransactionList: React.FC = () => {
                       setState(prev => ({ ...prev, customerFilter: null }));
                       navigate('/transactions');
                     }}
-                    className="text-sm text-gray-400 hover:text-gray-600"
+                    className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
                     title="Xóa bộ lọc khách hàng"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -237,15 +223,17 @@ const TransactionList: React.FC = () => {
               )}
             </div>
             <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
-              <button
+              <Button
+                variant="primary"
+                size="md"
                 onClick={() => alert('Tính năng đang được phát triển')}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+                className="inline-flex items-center"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                + Thêm giao dịch mới
-              </button>
+                Thêm giao dịch mới
+              </Button>
             </div>
           </div>
         </div>
@@ -279,20 +267,17 @@ const TransactionList: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Khoảng thời gian
                 </label>
-                <div className="flex gap-2">
-                  <input
-                    type="date"
-                    value={state.dateRange?.start || ''}
-                    onChange={(e) => handleDateRangeChange(e.target.value, state.dateRange?.end || '')}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
-                  />
-                  <input
-                    type="date"
-                    value={state.dateRange?.end || ''}
-                    onChange={(e) => handleDateRangeChange(state.dateRange?.start || '', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
-                  />
-                </div>
+                <TimeRangeFilter
+                  value={state.dateRange}
+                  onChange={(range) => {
+                    if (range) {
+                      handleDateRangeChange(range.start, range.end);
+                    } else {
+                      handleDateRangeChange('', '');
+                    }
+                  }}
+                  placeholder="Tất cả thời gian"
+                />
               </div>
 
               {/* Transaction Type */}
@@ -324,9 +309,32 @@ const TransactionList: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900">
                 Danh sách giao dịch
               </h3>
-              <p className="text-sm text-gray-500">
-                Hiển thị {(state.currentPage - 1) * state.pageSize + 1} đến {Math.min(state.currentPage * state.pageSize, state.totalCount)} trong tổng số {state.totalCount} giao dịch
-              </p>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">Hiển thị</span>
+                  <select
+                    value={state.pageSize}
+                    onChange={(e) => setState(prev => ({
+                      ...prev,
+                      pageSize: Number(e.target.value),
+                      currentPage: 1
+                    }))}
+                    className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 min-w-[60px]"
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={15}>15</option>
+                    <option value={20}>20</option>
+                    <option value={30}>30</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                  <span className="text-sm text-gray-500">giao dịch</span>
+                </div>
+                <p className="text-sm text-gray-500">
+                  Hiển thị {(state.currentPage - 1) * state.pageSize + 1} đến {Math.min(state.currentPage * state.pageSize, state.totalCount)} trong tổng số {state.totalCount} giao dịch
+                </p>
+              </div>
             </div>
           </div>
 
@@ -386,7 +394,7 @@ const TransactionList: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900">
-                        <span className={transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}>
+                        <span className={getTransactionTypeTextColor(transaction.transaction_type)}>
                           {formatCurrency(transaction.amount)}
                         </span>
                       </td>

@@ -6,7 +6,7 @@ import { supabase } from '../../services/supabase'
 const Navigation: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const navigate = useNavigate()
-  const { t, i18n } = useTranslation()
+  const { i18n } = useTranslation()
 
   const handleLogout = async () => {
     try {
@@ -39,7 +39,7 @@ const Navigation: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
   }
 
   return (
-    <nav className="sticky top-0 z-[100] bg-white shadow-sm border-b border-gray-200 backdrop-blur-sm" style={{ position: 'sticky', top: 0 }}>
+    <nav className="sticky top-0 z-[100] bg-white shadow-sm border-b border-gray-200 backdrop-blur-sm">
       <div className="flex justify-between items-center h-16 px-4 sm:px-6 lg:px-8">
         {/* Left: Brand */}
         <div className="flex items-center">

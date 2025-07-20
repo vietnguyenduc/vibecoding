@@ -42,7 +42,8 @@
     "theme": "Giao diện",
     "dark": "Tối",
     "light": "Sáng",
-    "system": "Hệ thống"
+    "system": "Hệ thống",
+    "retry": "Thử lại"
   },
   "app": {
     "title": "Quản lý công nợ TPL",
@@ -101,6 +102,14 @@
     "topCustomersDescription": "Danh sách khách hàng có số dư cao nhất",
     "customersToWatch": "Khách hàng cần chú ý",
     "customersToWatchDescription": "Danh sách khách hàng có công nợ cao tính tới thời điểm hiện tại",
+    "customerCode": "Mã khách hàng",
+    "fullName": "Họ và tên",
+    "phone": "Số điện thoại",
+    "email": "Email",
+    "address": "Địa chỉ",
+    "status": "Trạng thái",
+    "createdAt": "Ngày tạo",
+    "lastTransaction": "Giao dịch cuối",
     "totalBalance": "Tổng số tiền giao dịch",
     "totalIncome": "Tổng thu",
     "totalDebt": "Tổng cho nợ",
@@ -206,6 +215,10 @@
     "createdAt": "Ngày tạo",
     "updatedAt": "Ngày cập nhật",
     "customerNotFound": "Không tìm thấy khách hàng",
+    "customerInformation": "Thông tin khách hàng",
+    "financialSummary": "Tóm tắt tài chính",
+    "totalTransactions": "Tổng giao dịch",
+    "averageTransaction": "Giao dịch trung bình",
     "customerCreated": "Tạo khách hàng thành công",
     "customerUpdated": "Cập nhật khách hàng thành công",
     "customerDeleted": "Xóa khách hàng thành công",
@@ -223,6 +236,7 @@
     "allStatuses": "Tất cả trạng thái",
     "loading": "Đang tải khách hàng...",
     "loadingData": "Đang tải dữ liệu khách hàng...",
+    "loadingCustomer": "Đang tải thông tin khách hàng...",
     "error": "Lỗi tải khách hàng",
     "noCustomers": "Không có khách hàng nào",
     "noCustomersDescription": "Nhập khách hàng hoặc thêm thủ công",
@@ -237,7 +251,7 @@
       "code": "Mã",
       "name": "Tên",
       "phone": "Điện thoại",
-      "balance": "Số dư",
+      "balance": "Công nợ hiện tại",
       "lastTransaction": "Giao dịch cuối",
       "status": "Trạng thái",
       "actions": "Hành động"
@@ -275,7 +289,10 @@
         "date": "Ngày",
         "type": "Loại",
         "amount": "Số tiền",
-        "description": "Mô tả"
+    "description": "Mô tả",
+    "reference": "Số tham chiếu",
+    "transactionHistory": "Lịch sử giao dịch",
+    "noTransactions": "Không có giao dịch nào"
       }
     },
     "form": {
@@ -338,6 +355,8 @@
     "charge": "Thu phí",
     "adjustment": "Điều chỉnh",
     "refund": "Hoàn tiền",
+    "debtIncrease": "Tăng nợ",
+    "debtDecrease": "Giảm nợ",
     "transactionNotFound": "Không tìm thấy giao dịch",
     "transactionCreated": "Tạo giao dịch thành công",
     "transactionUpdated": "Cập nhật giao dịch thành công",

@@ -5,6 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { databaseService } from '../../services/database';
 import { formatCurrency } from '../../utils/formatting';
 import { LoadingFallback, ErrorFallback } from '../../components/UI/FallbackUI';
+import Button from '../../components/UI/Button';
 import {
   MetricsCard,
   BalanceBreakdown,
@@ -148,11 +149,17 @@ const Dashboard: React.FC = () => {
           />
           <MetricsCard
             title={t('dashboard.transactionsInPeriod', { period: t(`dashboard.timeRange.${timeRange}`) })}
-            value={metrics.transactionsInPeriod.toString()}
-            change={metrics.transactionsInPeriodChange}
-            changeType={metrics.transactionsInPeriodChange >= 0 ? 'increase' : 'decrease'}
+            value=""
             icon="chart"
             color="warning"
+            dualValues={{
+              income: metrics.transactionPaymentCount.toString(),
+              debt: metrics.transactionChargeCount.toString(),
+              incomeChange: undefined,
+              debtChange: undefined
+            }}
+            change={metrics.transactionsInPeriodChange}
+            changeType={metrics.transactionsInPeriodChange >= 0 ? 'increase' : 'decrease'}
           />
           <MetricsCard
             title={t('dashboard.transactionAmountsInPeriod', { period: t(`dashboard.timeRange.${timeRange}`) })}
@@ -228,24 +235,28 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
               <div className="flex gap-2">
-                <button
+                <Button
+                  variant="primary"
+                  size="md"
                   onClick={() => navigate('/import/transactions')}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                  className="inline-flex items-center"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   {t('dashboard.createTransaction')}
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="md"
                   onClick={() => navigate('/transactions')}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                  className="inline-flex items-center"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
                   {t('dashboard.transactionList')}
-                </button>
+                </Button>
               </div>
             </div>
             <div className="p-4">

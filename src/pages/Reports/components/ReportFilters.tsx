@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Button from '../../../components/UI/Button';
 import { format } from 'date-fns';
 import { ReportType, ReportFilters as ReportFiltersType } from '../../../types';
 
@@ -135,7 +136,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
       <div className="flex flex-wrap items-center gap-4">
         {/* Date Range Filter */}
         <div className="relative">
-          <button
+          <Button
             onClick={() => setIsOpen(!isOpen)}
             className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
@@ -166,7 +167,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
                 d="M19 9l-7 7-7-7"
               />
             </svg>
-          </button>
+          </Button>
 
           {isOpen && (
             <div className="absolute z-10 mt-2 w-80 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
@@ -177,36 +178,36 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
                 
                 {/* Quick Date Options */}
                 <div className="grid grid-cols-2 gap-2 mb-4">
-                  <button
+                  <Button
                     onClick={() => handleQuickDateSelect('today')}
                     className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
                   >
                     {t('reports.filters.today')}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleQuickDateSelect('week')}
                     className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
                   >
                     {t('reports.filters.lastWeek')}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleQuickDateSelect('month')}
                     className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
                   >
                     {t('reports.filters.thisMonth')}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleQuickDateSelect('quarter')}
                     className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
                   >
                     {t('reports.filters.thisQuarter')}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleQuickDateSelect('year')}
                     className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
                   >
                     {t('reports.filters.thisYear')}
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Custom Date Range */}
@@ -237,19 +238,22 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-between mt-4 pt-3 border-t border-gray-200">
-                  <button
+                <div className="flex justify-between items-center">
+                  <Button
+                    variant="secondary"
+                    size="md"
                     onClick={clearFilters}
-                    className="text-sm text-gray-600 hover:text-gray-900"
                   >
                     {t('reports.filters.clear')}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="md"
                     onClick={() => setIsOpen(false)}
                     className="text-sm text-primary-600 hover:text-primary-700"
                   >
                     {t('reports.filters.apply')}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -344,7 +348,9 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
 
         {/* Clear All Filters */}
         {(filters.dateRange || filters.sortBy || filters.groupBy) && (
-          <button
+          <Button
+            variant="secondary"
+            size="md"
             onClick={clearFilters}
             className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
@@ -352,7 +358,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
             {t('reports.filters.clearAll')}
-          </button>
+          </Button>
         )}
       </div>
     </div>

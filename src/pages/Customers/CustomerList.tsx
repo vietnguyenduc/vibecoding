@@ -12,6 +12,7 @@ import {
   CustomerFormModal,
 } from './components';
 import Pagination from '../../components/UI/Pagination';
+import Button from '../../components/UI/Button';
 
 interface CustomerListState {
   customers: Customer[];
@@ -165,16 +166,6 @@ const CustomerList: React.FC = () => {
     }
   };
 
-  // Handle create new customer
-  const handleCreateCustomer = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      selectedCustomer: null,
-      formMode: 'create',
-      showFormModal: true,
-    }));
-  }, []);
-
   // Handle form submission
   const handleFormSubmit = useCallback(async (customerData: Partial<Customer>) => {
     try {
@@ -267,25 +258,17 @@ const CustomerList: React.FC = () => {
             </div>
             
             <div className="mt-4 sm:mt-0">
-              <button
-                onClick={handleCreateCustomer}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              <Button
+                variant="primary"
+                size="md"
+                onClick={() => alert('Tính năng đang được phát triển')}
+                className="inline-flex items-center"
               >
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
                 {t('customers.addNew')}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

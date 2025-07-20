@@ -531,7 +531,7 @@ export const recoveryUtils = {
 
     // Check if customers reference valid branches
     for (const customer of backupData.customers) {
-      if (!branchIds.has(customer.branch_id)) {
+      if (customer.branch_id && !branchIds.has(customer.branch_id)) {
         warnings.push(`Customer ${customer.full_name} references non-existent branch ${customer.branch_id}`);
       }
     }

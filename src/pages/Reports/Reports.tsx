@@ -7,6 +7,7 @@ import ReportTypeSelector from './components/ReportTypeSelector';
 import ReportFilters from './components/ReportFilters';
 import ReportPreview from './components/ReportPreview';
 import ExportModal from './components/ExportModal';
+import Button from '../../components/UI/Button';
 import { ReportType, ExportFormat, ReportFilters as ReportFiltersType } from '../../types';
 
 interface ReportsState {
@@ -138,15 +139,15 @@ const Reports: React.FC = () => {
         const aValue = a[state.filters.sortBy as keyof typeof a];
         const bValue = b[state.filters.sortBy as keyof typeof b];
         
-        // Handle undefined values
-        if (aValue === undefined && bValue === undefined) return 0;
-        if (aValue === undefined) return 1;
-        if (bValue === undefined) return -1;
+        // Handle undefined and null values
+        if ((aValue === undefined || aValue === null) && (bValue === undefined || bValue === null)) return 0;
+        if (aValue === undefined || aValue === null) return 1;
+        if (bValue === undefined || bValue === null) return -1;
         
         if (state.filters.sortOrder === 'asc') {
-          return aValue > bValue ? 1 : -1;
+          return (aValue as any) > (bValue as any) ? 1 : -1;
         } else {
-          return aValue < bValue ? 1 : -1;
+          return (aValue as any) < (bValue as any) ? 1 : -1;
         }
       });
     }
@@ -383,26 +384,18 @@ const Reports: React.FC = () => {
             </div>
             
             {state.reportData && (
-              <div className="mt-4 sm:mt-0">
-                <button
+              <div className="flex justify-end">
+                <Button
+                  variant="primary"
+                  size="md"
                   onClick={() => setState(prev => ({ ...prev, showExportModal: true }))}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                  className="inline-flex items-center"
                 >
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   {t('reports.export')}
-                </button>
+                </Button>
               </div>
             )}
           </div>

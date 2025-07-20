@@ -1,15 +1,23 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { NavLink, useNavigate } from 'react-router-dom'
+import AddButton from '../UI/AddButton'
+
+interface MenuItem {
+  path: string;
+  name: string;
+  icon: React.ReactNode;
+  hasAddButton?: boolean;
+  addAction?: () => void;
+}
 
 interface SidebarProps {
   onClose?: () => void
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
-  const { t } = useTranslation()
+  const navigate = useNavigate();
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     {
       path: '/dashboard',
       name: 'Bảng điều khiển',
@@ -27,7 +35,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
-      )
+      ),
+      hasAddButton: true,
+      addAction: () => navigate('/import/customers')
     },
     {
       path: '/transactions',
@@ -36,30 +46,24 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
         </svg>
-      )
+      ),
+      hasAddButton: true,
+      addAction: () => navigate('/import/transactions')
     },
     {
-      path: '/import/transactions',
-      name: 'Nhập giao dịch',
+      path: '/settings',
+      name: 'Cài đặt',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-        </svg>
-      )
-    },
-    {
-      path: '/import/customers',
-      name: 'Nhập khách hàng',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       )
     }
   ]
 
   return (
-    <div className="w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
+    <div className="w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen no-scrollbar overflow-y-auto">
       {/* Mobile close button */}
       {onClose && (
         <div className="flex items-center justify-between p-4 border-b border-gray-200 lg:hidden">
@@ -90,12 +94,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       <div className="p-4">
         <nav className="space-y-2">
           {menuItems.map((item) => (
+            <div key={item.path} className="flex items-center justify-between group">
             <NavLink
-              key={item.path}
               to={item.path}
               onClick={onClose} // Close mobile menu when item is clicked
               className={({ isActive }) =>
-                `flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  `flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors flex-1 ${
                   isActive
                     ? 'bg-primary-100 text-primary-700'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
@@ -105,6 +109,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
               {item.icon}
               <span>{item.name}</span>
             </NavLink>
+              {item.hasAddButton && (
+                <div className="ml-2">
+                  <AddButton
+                    onClick={() => item.addAction?.()}
+                    title="Thêm"
+                    showShine={item.name === 'Giao dịch'}
+                    variant={item.name === 'Khách hàng' ? 'plain' : 'default'}
+                  />
+                </div>
+              )}
+            </div>
           ))}
         </nav>
       </div>

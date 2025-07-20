@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Button from '../../../components/UI/Button';
 import { ReportType, ExportFormat } from '../../../types';
 
 interface ExportModalProps {
@@ -22,8 +23,10 @@ const ExportModal: React.FC<ExportModalProps> = ({
   const [includeHeaders, setIncludeHeaders] = useState(true);
   const [includeCharts, setIncludeCharts] = useState(true);
   const [includeDetails, setIncludeDetails] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = () => {
+    setIsExporting(true);
     const options = {
       includeHeaders,
       includeCharts,
@@ -48,7 +51,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-[200] overflow-y-auto">
       <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose} />
 
@@ -176,17 +179,8 @@ const ExportModal: React.FC<ExportModalProps> = ({
 
               {/* Progress Bar */}
               {progress > 0 && progress < 100 && (
-                <div>
-                  <div className="flex justify-between text-sm text-gray-600 mb-2">
-                    <span>{t('reports.export.exporting')}</span>
-                    <span>{progress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
+                <div className="progress-bar">
+                  <div className={`progress-fill w-[${progress}%]`}></div>
                 </div>
               )}
 
@@ -232,34 +226,23 @@ const ExportModal: React.FC<ExportModalProps> = ({
 
           {/* Footer */}
           <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            {progress === 0 && (
-              <button
-                onClick={handleExport}
-                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm"
+            <div className="flex justify-end space-x-3">
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={onClose}
               >
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                {t('reports.export.export')}
-              </button>
-            )}
-            
-            <button
-              onClick={onClose}
-              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              {progress === 100 ? t('common.close') : t('common.cancel')}
-            </button>
+                {t('common.cancel')}
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleExport}
+                disabled={isExporting}
+              >
+                {isExporting ? t('common.exporting') : t('common.export')}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

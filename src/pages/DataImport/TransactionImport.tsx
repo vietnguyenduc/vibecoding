@@ -6,6 +6,7 @@ import { validateTransactionData, parseTransactionData } from '../../utils/impor
 import { formatCurrency, formatDate } from '../../utils/formatting';
 import { LoadingFallback } from '../../components/UI/FallbackUI';
 import { databaseService } from '../../services/database';
+import Button from '../../components/UI/Button';
 
 interface TransactionImportProps {
   onImportComplete?: (data: Transaction[]) => void;
@@ -46,7 +47,7 @@ const NewCustomerModal: React.FC<NewCustomerModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-[200]">
       <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
         <div className="mt-3">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
@@ -104,20 +105,21 @@ const NewCustomerModal: React.FC<NewCustomerModalProps> = ({
             </div>
             
             <div className="flex justify-end space-x-3 pt-4">
-              <button
-                type="button"
+              <Button
+                variant="secondary"
+                size="md"
                 onClick={onClose}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 {t('common.cancel')}
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
                 type="submit"
                 disabled={isLoading || !formData.full_name.trim()}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? t('common.saving') : t('common.save')}
-              </button>
+              </Button>
             </div>
           </form>
         </div>
@@ -506,21 +508,23 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
 
               {/* Action Buttons */}
               <div className="flex justify-between items-center">
-                <button
+                <Button
+                  variant="secondary"
+                  size="md"
                   onClick={handleReset}
-                  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   {t('common.reset')}
-                </button>
+                </Button>
 
                 <div className="flex space-x-3">
-                  <button
+                  <Button
+                    variant="primary"
+                    size="md"
                     onClick={handleValidateData}
                     disabled={!rawData.trim()}
-                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {t('import.validateData')}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -559,13 +563,14 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
 
                 {/* Import Action */}
                 <div className="flex justify-end">
-                  <button
+                  <Button
+                    variant="success"
+                    size="md"
                     onClick={handleImportData}
                     disabled={!importData.isValid || importData.data.length === 0}
-                    className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {t('import.importData')}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}

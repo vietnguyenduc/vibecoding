@@ -4,10 +4,12 @@ import './App.css'
 import Layout from './components/Layout/Layout'
 import Dashboard from './pages/Dashboard/Dashboard'
 import CustomerList from './pages/Customers/CustomerList'
+import CustomerDetail from './pages/Customers/CustomerDetail'
 import Reports from './pages/Reports/Reports'
 import TransactionList from './pages/Transactions/TransactionList'
 import TransactionImport from './pages/DataImport/TransactionImport'
 import CustomerImport from './pages/DataImport/CustomerImport'
+import Settings from './pages/Settings/Settings'
 import Login from './pages/Auth/Login'
 import ProtectedRoute from './components/Auth/ProtectedRoute'
 
@@ -26,8 +28,10 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="customers" element={<CustomerList />} />
+          <Route path="customers/:customerId" element={<CustomerDetail />} />
           <Route path="transactions" element={<TransactionList />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="settings" element={<Settings />} />
           <Route path="import/transactions" element={<TransactionImport />} />
           <Route path="import/customers" element={<CustomerImport />} />
         </Route>

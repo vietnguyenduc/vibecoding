@@ -105,7 +105,10 @@ const BalanceByBankChart: React.FC<BalanceByBankChartProps> = ({ data }) => {
               dataKey="balance" 
               position="top" 
               formatter={(value: number) => formatCurrency(value)}
-              style={{ fontSize: '10px', fontWeight: '500' }}
+              style={{
+                fontSize: '10px',
+                fontWeight: '500'
+              }}
             />
           </Bar>
         </BarChart>
