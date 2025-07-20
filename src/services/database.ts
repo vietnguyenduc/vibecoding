@@ -912,6 +912,26 @@ export const dashboardService = {
       year: 720
     };
 
+    // Mock số lượng giao dịch thu và cho nợ kỳ trước
+    const previousTransactionPaymentCounts = {
+      day: 1,
+      week: 8,
+      month: 24,
+      quarter: 72,
+      year: 288
+    };
+    const previousTransactionChargeCounts = {
+      day: 2,
+      week: 12,
+      month: 36,
+      quarter: 108,
+      year: 432
+    };
+
+    // Tính chênh lệch
+    const transactionPaymentChange = transactionPaymentCounts[timeRange] - previousTransactionPaymentCounts[timeRange];
+    const transactionChargeChange = transactionChargeCounts[timeRange] - previousTransactionChargeCounts[timeRange];
+
     return {
       data: {
         totalOutstanding: outstandingBalances[timeRange],
@@ -922,6 +942,8 @@ export const dashboardService = {
         transactionsInPeriodChange: transactionChanges[timeRange],
         transactionPaymentCount: transactionPaymentCounts[timeRange],
         transactionChargeCount: transactionChargeCounts[timeRange],
+        transactionPaymentChange,
+        transactionChargeChange,
         transactionAmountsInPeriod: transactionAmounts[timeRange],
         transactionAmountsInPeriodChange: transactionAmountChanges[timeRange],
         transactionIncomeInPeriod: incomeAmounts[timeRange],

@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from './UI/Button';
 
 const ThemeDemo: React.FC = () => {
   return (
@@ -71,18 +72,18 @@ const ThemeDemo: React.FC = () => {
         <h2 className="text-2xl font-semibold text-business-text-primary">Button Components</h2>
         <div className="card-base p-6 space-y-4">
           <div className="flex flex-wrap gap-3">
-            <button className="btn-primary">Primary Button</button>
-            <button className="btn-secondary">Secondary Button</button>
-            <button className="btn-success">Success Button</button>
-            <button className="btn-warning">Warning Button</button>
-            <button className="btn-danger">Danger Button</button>
-            <button className="btn-outline">Outline Button</button>
+            <Button variant="primary">Primary Button</Button>
+            <Button variant="secondary">Secondary Button</Button>
+            <Button variant="success">Success Button</Button>
+            <Button variant="warning">Warning Button</Button>
+            <Button variant="danger">Danger Button</Button>
+            <Button variant="secondary">Outline Button</Button>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button className="btn-primary btn-sm">Small Primary</button>
-            <button className="btn-secondary btn-sm">Small Secondary</button>
-            <button className="btn-primary btn-lg">Large Primary</button>
-            <button className="btn-secondary btn-lg">Large Secondary</button>
+            <Button variant="primary" size="sm">Small Primary</Button>
+            <Button variant="secondary" size="sm">Small Secondary</Button>
+            <Button variant="primary" size="lg">Large Primary</Button>
+            <Button variant="secondary" size="lg">Large Secondary</Button>
           </div>
         </div>
       </section>
@@ -127,7 +128,7 @@ const ThemeDemo: React.FC = () => {
               <input type="password" className="form-input-error" placeholder="Enter your password" />
               <p className="form-error">Password is required.</p>
             </div>
-            <button className="btn-primary w-full">Submit Form</button>
+            <Button variant="primary" className="w-full">Submit Form</Button>
           </div>
         </div>
       </section>

@@ -155,11 +155,9 @@ const Dashboard: React.FC = () => {
             dualValues={{
               income: metrics.transactionPaymentCount.toString(),
               debt: metrics.transactionChargeCount.toString(),
-              incomeChange: undefined,
-              debtChange: undefined
+              incomeChange: metrics.transactionPaymentChange,
+              debtChange: metrics.transactionChargeChange
             }}
-            change={metrics.transactionsInPeriodChange}
-            changeType={metrics.transactionsInPeriodChange >= 0 ? 'increase' : 'decrease'}
           />
           <MetricsCard
             title={t('dashboard.transactionAmountsInPeriod', { period: t(`dashboard.timeRange.${timeRange}`) })}

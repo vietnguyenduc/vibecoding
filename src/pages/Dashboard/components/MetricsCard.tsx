@@ -63,7 +63,7 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
         return {
           bg: 'bg-gradient-to-br from-blue-50 to-blue-100',
           icon: 'text-blue-600',
-          value: 'text-blue-900',
+          value: 'text-gray-900',
         };
       case 'success':
         return {
