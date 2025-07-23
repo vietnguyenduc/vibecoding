@@ -217,9 +217,18 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
   }, []);
 
   const handleValidateData = useCallback(() => {
+    // Chuyển tableData thành rawData dạng text nếu cần, hoặc validate trực tiếp
+    // Giả sử validateTransactionData nhận mảng object
+    const validation = validateTransactionData(tableData);
+    setImportData({
+      file: null,
+      data: tableData,
+      errors: validation.errors,
+      isValid: validation.isValid,
+    });
     setShowPreview(true);
     setCurrentStep(2);
-  }, []);
+  }, [tableData]);
 
   const handleAddNewCustomer = useCallback((customerName: string) => {
     setNewCustomerName(customerName);
@@ -289,12 +298,12 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
   }, [importData, onImportComplete, user]);
 
   const handleReset = useCallback(() => {
-    setRawData('');
+    setTableData(Array(5).fill(null).map(() => ({ ...emptyRow })));
     setImportData({ file: null, data: [], errors: [], isValid: false });
     setShowPreview(false);
     setCurrentStep(1);
     setUnmatchedCustomers(new Set());
-  }, []);
+  }, [emptyRow]);
 
   const getErrorForRow = (rowIndex: number): ImportError[] => {
     return importData.errors.filter(error => error.row === rowIndex);
