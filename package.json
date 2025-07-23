@@ -20,7 +20,7 @@
     "health-check": "node scripts/verify-dependencies.js",
     "pre-commit": "npm run lint && npm run type-check && npm run test",
     "postinstall": "npm run verify-deps",
-    "prepare": "husky install",
+    "prepare": "if [ \"$VERCEL\" != \"1\" ]; then husky install; fi",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
