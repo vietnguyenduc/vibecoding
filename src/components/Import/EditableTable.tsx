@@ -119,6 +119,42 @@ const EditableTable: React.FC<EditableTableProps> = ({
     onDataChange(newData);
   }, [data, onDataChange]);
 
+  // Thêm vào EditableTable:
+  // Bắt sự kiện paste trên từng cell hoặc toàn bảng
+  const handlePaste = useCallback((e: React.ClipboardEvent<HTMLTableElement>) => {
+    if (!editingCell) return;
+    const clipboardData = e.clipboardData.getData('text');
+    if (!clipboardData) return;
+    const rows = clipboardData.split(/\r?\n/).filter(Boolean).map(row => row.split(/\t|,/));
+    if (rows.length === 0) return;
+    const { row: startRow, col: startCol } = editingCell;
+    const colIndex = columns.findIndex(c => c.key === startCol);
+    if (colIndex === -1) return;
+    let newData = [...data];
+    // Thêm dòng nếu cần
+    while (newData.length < startRow + rows.length) {
+      const newRow = columns.reduce((acc, col) => { acc[col.key] = ''; return acc; }, {} as any);
+      newData.push(newRow);
+    }
+    // Ghi đè dữ liệu
+    rows.forEach((rowArr, rIdx) => {
+      rowArr.forEach((cell, cIdx) => {
+        const col = columns[colIndex + cIdx];
+        if (col) {
+          let cleanCell = cell.trim();
+          if (cleanCell.startsWith('"') && cleanCell.endsWith('"')) {
+            cleanCell = cleanCell.slice(1, -1);
+          }
+          newData[startRow + rIdx][col.key] = cleanCell;
+        }
+      });
+    });
+    onDataChange(newData);
+    setEditingCell(null);
+    setEditValue('');
+    e.preventDefault();
+  }, [editingCell, columns, data, onDataChange]);
+
   // Render cell content
   const renderCell = useCallback((rowIndex: number, column: string, value: string, columnConfig: any) => {
     const error = getErrorForCell(rowIndex, column);
@@ -203,7 +239,7 @@ const EditableTable: React.FC<EditableTableProps> = ({
 
       {/* Table */}
       <div className="overflow-x-auto border border-gray-200 rounded-lg">
-        <table ref={tableRef} className="min-w-full divide-y divide-gray-200">
+        <table ref={tableRef} className="min-w-full divide-y divide-gray-200" onPaste={handlePaste}>
           <thead className="bg-gray-50">
             <tr>
               {columns.map((column) => (

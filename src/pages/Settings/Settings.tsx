@@ -85,6 +85,8 @@ const Settings: React.FC = () => {
         })) || [];
         
         setBranches(formattedBranches);
+        localStorage.setItem('bankAccounts', JSON.stringify(formattedBankAccounts));
+        localStorage.setItem('branches', JSON.stringify(formattedBranches));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Lỗi khi tải dữ liệu');
       } finally {
@@ -124,6 +126,91 @@ const Settings: React.FC = () => {
     { id: '6', name: 'Loại khách hàng', type: 'select', required: false, isActive: true, options: ['Cá nhân', 'Doanh nghiệp', 'Tổ chức'] },
   ]);
 
+  // Thêm vào mảng tabs:
+  const tabs = [
+    { id: 'transaction-types', name: 'Loại giao dịch', icon: '📊' },
+    { id: 'bank-accounts', name: 'Tài khoản ngân hàng', icon: '🏦' },
+    { id: 'branches', name: 'Chi nhánh', icon: '🏢' },
+    { id: 'customer-fields', name: 'Trường khách hàng', icon: '👥' },
+    { id: 'import-fields', name: 'Cài đặt trường import', icon: '📝' },
+  ];
+
+  // Thêm state và logic lưu cấu hình vào localStorage:
+  const defaultImportFields = [
+    { key: 'customer_name', label: 'Tên khách hàng', type: 'text', required: true, enabled: true },
+    { key: 'bank_account', label: 'Số tài khoản ngân hàng', type: 'bank-select', required: false, enabled: true },
+    { key: 'branch', label: 'Chi nhánh', type: 'branch-select', required: false, enabled: true },
+    { key: 'transaction_type', label: 'Loại giao dịch', type: 'select', required: true, enabled: true },
+    { key: 'amount', label: 'Số tiền', type: 'number', required: true, enabled: true },
+    { key: 'transaction_date', label: 'Ngày giao dịch', type: 'date', required: true, enabled: true },
+    { key: 'document_number', label: 'Số chứng từ', type: 'document-number', required: false, enabled: true },
+    { key: 'description', label: 'Nội dung', type: 'text', required: false, enabled: true },
+  ];
+  // Cập nhật logic khởi tạo importFields:
+  const [importFields, setImportFields] = useState(() => {
+    const saved = localStorage.getItem('importFields');
+    let fields = saved ? JSON.parse(saved) : [];
+    // Merge các trường mẫu mới nếu thiếu
+    defaultImportFields.forEach(def => {
+      if (!fields.some((f: any) => f.key === def.key)) {
+        fields.push(def);
+      }
+    });
+    if (fields.length === 0) fields = defaultImportFields;
+    localStorage.setItem('importFields', JSON.stringify(fields));
+    return fields;
+  });
+  // Bổ sung vào fieldTypes:
+  const fieldTypes = [
+    { value: 'text', label: 'Text' },
+    { value: 'number', label: 'Number' },
+    { value: 'date', label: 'Date' },
+    { value: 'select', label: 'Select' },
+    { value: 'document-number', label: 'Số chứng từ' },
+  ];
+  const handleFieldChange = (idx: number, prop: string, value: any) => {
+    setImportFields(fields => {
+      const updated = fields.map((f, i) => i === idx ? { ...f, [prop]: value } : f);
+      localStorage.setItem('importFields', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // Thêm hàm di chuyển trường lên/xuống:
+  const moveField = (idx: number, direction: 'up' | 'down') => {
+    setImportFields(fields => {
+      const newFields = [...fields];
+      if (direction === 'up' && idx > 0) {
+        [newFields[idx - 1], newFields[idx]] = [newFields[idx], newFields[idx - 1]];
+      }
+      if (direction === 'down' && idx < newFields.length - 1) {
+        [newFields[idx], newFields[idx + 1]] = [newFields[idx + 1], newFields[idx]];
+      }
+      localStorage.setItem('importFields', JSON.stringify(newFields));
+      return newFields;
+    });
+  };
+  // Thêm hàm xóa trường:
+  const removeField = (idx: number) => {
+    setImportFields(fields => {
+      const newFields = fields.filter((_, i) => i !== idx);
+      localStorage.setItem('importFields', JSON.stringify(newFields));
+      return newFields;
+    });
+  };
+  // Thêm state cho form thêm trường mới:
+  const [showAddField, setShowAddField] = useState(false);
+  const [newField, setNewField] = useState({ label: '', type: 'text', required: false, enabled: true });
+  const handleAddField = () => {
+    if (!newField.label.trim()) return;
+    setImportFields(fields => {
+      const updated = [...fields, { ...newField, key: Date.now().toString() }];
+      localStorage.setItem('importFields', JSON.stringify(updated));
+      return updated;
+    });
+    setShowAddField(false);
+    setNewField({ label: '', type: 'text', required: false, enabled: true });
+  };
 
 
   // Color options for transaction types
@@ -167,15 +254,6 @@ const Settings: React.FC = () => {
         break;
     }
   };
-
-  const tabs = [
-    { id: 'transaction-types', name: 'Loại giao dịch', icon: '📊' },
-    { id: 'bank-accounts', name: 'Tài khoản ngân hàng', icon: '🏦' },
-    { id: 'branches', name: 'Chi nhánh', icon: '🏢' },
-    { id: 'customer-fields', name: 'Trường khách hàng', icon: '👥' },
-  ];
-
-
 
   if (error) {
     return (
@@ -456,6 +534,179 @@ const Settings: React.FC = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* Thêm UI cấu hình trường import khi activeTab === 'import-fields': */}
+          {activeTab === 'import-fields' && (
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Cài đặt trường import</h2>
+              <table className="min-w-full border text-sm">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-2 py-1 border">Trường</th>
+                    <th className="px-2 py-1 border">Kiểu dữ liệu</th>
+                    <th className="px-2 py-1 border">Bắt buộc</th>
+                    <th className="px-2 py-1 border">Bật</th>
+                    <th className="px-2 py-1 border">Sắp xếp</th>
+                    <th className="px-2 py-1 border">Xóa</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {importFields.map((f, idx) => (
+                    <tr key={f.key}>
+                      <td className="px-2 py-1 border">{f.label}</td>
+                      <td className="px-2 py-1 border">
+                        {(() => {
+                          // Cứng quy tắc cho 2 trường
+                          if (f.label === 'Loại giao dịch' || f.key === 'transaction_type') {
+                            return (
+                              <>
+                                <select value="select" disabled className="border rounded px-1 py-0.5">
+                                  <option value="select">Select</option>
+                                </select>
+                                <div className="mt-1">
+                                  <label>
+                                    <input type="radio" checked readOnly /> Loại giao dịch hệ thống
+                                  </label>
+                                </div>
+                              </>
+                            );
+                          }
+                          if (f.label === 'Tài khoản ngân hàng' || f.key === 'bank_account') {
+                            return (
+                              <>
+                                <select value="select" disabled className="border rounded px-1 py-0.5">
+                                  <option value="select">Select</option>
+                                </select>
+                                <div className="mt-1">
+                                  <label>
+                                    <input type="radio" checked readOnly /> Ngân hàng
+                                  </label>
+                                </div>
+                              </>
+                            );
+                          }
+                          // Trường khác giữ logic như cũ
+                          return (
+                            <>
+                              <select
+                                value={f.type}
+                                onChange={e => handleFieldChange(idx, 'type', e.target.value)}
+                                className="border rounded px-1 py-0.5"
+                              >
+                                {fieldTypes.map(opt => (
+                                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
+                              </select>
+                              {f.type === 'select' && (
+                                <div className="mt-1">
+                                  <label className="mr-2">
+                                    <input
+                                      type="radio"
+                                      name={`optionSource-${idx}`}
+                                      checked={f.optionSource === 'manual' || !f.optionSource}
+                                      onChange={() => handleFieldChange(idx, 'optionSource', 'manual')}
+                                    /> Tự nhập
+                                  </label>
+                                  <label className="mr-2">
+                                    <input
+                                      type="radio"
+                                      name={`optionSource-${idx}`}
+                                      checked={f.optionSource === 'bank'}
+                                      onChange={() => handleFieldChange(idx, 'optionSource', 'bank')}
+                                    /> Ngân hàng
+                                  </label>
+                                  <label>
+                                    <input
+                                      type="radio"
+                                      name={`optionSource-${idx}`}
+                                      checked={f.optionSource === 'branch'}
+                                      onChange={() => handleFieldChange(idx, 'optionSource', 'branch')}
+                                    /> Chi nhánh
+                                  </label>
+                                  {(!f.optionSource || f.optionSource === 'manual') && (
+                                    <input
+                                      type="text"
+                                      placeholder="Nhập các giá trị, cách nhau bởi dấu phẩy"
+                                      value={f.options ? f.options.join(', ') : ''}
+                                      onChange={e => handleFieldChange(idx, 'options', e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
+                                      className="border rounded px-1 py-0.5 mt-1 w-full"
+                                    />
+                                  )}
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </td>
+                      <td className="px-2 py-1 border text-center">
+                        <input
+                          type="checkbox"
+                          checked={f.required}
+                          onChange={e => handleFieldChange(idx, 'required', e.target.checked)}
+                        />
+                      </td>
+                      <td className="px-2 py-1 border text-center">
+                        <input
+                          type="checkbox"
+                          checked={f.enabled}
+                          onChange={e => handleFieldChange(idx, 'enabled', e.target.checked)}
+                        />
+                      </td>
+                      <td className="px-2 py-1 border text-center">
+                        <button onClick={() => moveField(idx, 'up')} disabled={idx === 0} className="mr-1 px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">↑</button>
+                        <button onClick={() => moveField(idx, 'down')} disabled={idx === importFields.length - 1} className="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">↓</button>
+                      </td>
+                      <td className="px-2 py-1 border text-center">
+                        <button onClick={() => removeField(idx)} className="px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">Xóa</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="mt-4">
+                {!showAddField ? (
+                  <button onClick={() => setShowAddField(true)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">+ Thêm trường mới</button>
+                ) : (
+                  <div className="flex items-center space-x-2 mt-2">
+                    <input
+                      type="text"
+                      placeholder="Tên trường"
+                      value={newField.label}
+                      onChange={e => setNewField(f => ({ ...f, label: e.target.value }))}
+                      className="border rounded px-2 py-1"
+                    />
+                    <select
+                      value={newField.type}
+                      onChange={e => setNewField(f => ({ ...f, type: e.target.value }))}
+                      className="border rounded px-2 py-1"
+                    >
+                      {fieldTypes.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={newField.required}
+                        onChange={e => setNewField(f => ({ ...f, required: e.target.checked }))}
+                        className="mr-1"
+                      /> Bắt buộc
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={newField.enabled}
+                        onChange={e => setNewField(f => ({ ...f, enabled: e.target.checked }))}
+                        className="mr-1"
+                      /> Bật
+                    </label>
+                    <button onClick={handleAddField} className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">Lưu</button>
+                    <button onClick={() => setShowAddField(false)} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Hủy</button>
+                  </div>
+                )}
               </div>
             </div>
           )}
