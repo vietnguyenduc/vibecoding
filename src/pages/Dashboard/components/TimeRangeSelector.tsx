@@ -23,6 +23,7 @@ const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({ value, onChange }
     <div className="flex flex-wrap gap-1 bg-gray-50 rounded-xl p-1 overflow-x-auto shadow-sm border border-gray-100">
       {timeRanges.map((range) => (
         <Button
+          key={range}
           variant={value === range ? 'primary' : 'secondary'}
           size="sm"
           onClick={() => onChange(range)}

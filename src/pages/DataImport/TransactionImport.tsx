@@ -173,6 +173,10 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
     setImportFields(fields => fields.map((f, i) => i === idx ? { ...f, [prop]: value } : f));
   };
 
+  // Đặt ngay sau enabledFields:
+  const emptyRow = importFields.reduce((acc, col) => { acc[col.key] = ''; return acc; }, {} as any);
+  const [tableData, setTableData] = useState(() => Array(5).fill(null).map(() => ({ ...emptyRow })));
+
   // Parse and validate data when raw data changes
   const processedData = useMemo(() => {
     if (!rawData.trim()) {
@@ -353,7 +357,7 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
     }
 
     // Trong renderDataPreview, lấy danh sách cột từ enabledFields (importFields.filter(f => f.enabled)), giữ đúng thứ tự và label:
-    const previewColumns = enabledFields;
+    const previewColumns = importFields.filter(f => f.enabled);
 
     return (
       <div className="mt-6">
@@ -477,10 +481,6 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
       }
     }).join(', '),
   ];
-
-  // Khởi tạo 5 dòng trắng mặc định dựa trên enabledFields:
-  const emptyRow = enabledFields.reduce((acc, col) => { acc[col.key] = ''; return acc; }, {} as any);
-  const [tableData, setTableData] = useState(() => Array(5).fill(null).map(() => ({ ...emptyRow })));
 
   if (isProcessing) {
     return (
