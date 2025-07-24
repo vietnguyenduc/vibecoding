@@ -40,6 +40,17 @@ interface CustomerField {
   options?: string[];
 }
 
+// Định nghĩa type ImportField ở đầu file nếu chưa có:
+type ImportField = {
+  key: string;
+  label: string;
+  type: string;
+  required: boolean;
+  enabled: boolean;
+  optionSource?: string;
+  options?: string[];
+};
+
 const Settings: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('transaction-types');
@@ -58,7 +69,7 @@ const Settings: React.FC = () => {
           throw new Error(bankAccountsResponse.error);
         }
         
-        const formattedBankAccounts = bankAccountsResponse.data?.map(account => ({
+        const formattedBankAccounts = bankAccountsResponse.data?.map((account: any) => ({
           id: account.id,
           bankName: account.bank_name,
           accountNumber: account.account_number,
@@ -76,7 +87,7 @@ const Settings: React.FC = () => {
           throw new Error(branchesResponse.error);
         }
         
-        const formattedBranches = branchesResponse.data?.map(branch => ({
+        const formattedBranches = branchesResponse.data?.map((branch: any) => ({
           id: branch.id,
           name: branch.name,
           address: branch.address,
@@ -151,8 +162,8 @@ const Settings: React.FC = () => {
     const saved = localStorage.getItem('importFields');
     let fields = saved ? JSON.parse(saved) : [];
     // Merge các trường mẫu mới nếu thiếu
-    defaultImportFields.forEach(def => {
-      if (!fields.some((f: any) => f.key === def.key)) {
+    defaultImportFields.forEach((def: ImportField) => {
+      if (!fields.some((f: ImportField) => f.key === def.key)) {
         fields.push(def);
       }
     });
@@ -169,8 +180,8 @@ const Settings: React.FC = () => {
     { value: 'document-number', label: 'Số chứng từ' },
   ];
   const handleFieldChange = (idx: number, prop: string, value: any) => {
-    setImportFields(fields => {
-      const updated = fields.map((f, i) => i === idx ? { ...f, [prop]: value } : f);
+    setImportFields((fields: ImportField[]) => {
+      const updated = fields.map((f: ImportField, i: number) => i === idx ? { ...f, [prop]: value } : f);
       localStorage.setItem('importFields', JSON.stringify(updated));
       return updated;
     });
@@ -178,7 +189,7 @@ const Settings: React.FC = () => {
 
   // Thêm hàm di chuyển trường lên/xuống:
   const moveField = (idx: number, direction: 'up' | 'down') => {
-    setImportFields(fields => {
+    setImportFields((fields: ImportField[]) => {
       const newFields = [...fields];
       if (direction === 'up' && idx > 0) {
         [newFields[idx - 1], newFields[idx]] = [newFields[idx], newFields[idx - 1]];
@@ -192,8 +203,8 @@ const Settings: React.FC = () => {
   };
   // Thêm hàm xóa trường:
   const removeField = (idx: number) => {
-    setImportFields(fields => {
-      const newFields = fields.filter((_, i) => i !== idx);
+    setImportFields((fields: ImportField[]) => {
+      const newFields = fields.filter((_: ImportField, i: number) => i !== idx);
       localStorage.setItem('importFields', JSON.stringify(newFields));
       return newFields;
     });
@@ -203,7 +214,7 @@ const Settings: React.FC = () => {
   const [newField, setNewField] = useState({ label: '', type: 'text', required: false, enabled: true });
   const handleAddField = () => {
     if (!newField.label.trim()) return;
-    setImportFields(fields => {
+    setImportFields((fields: ImportField[]) => {
       const updated = [...fields, { ...newField, key: Date.now().toString() }];
       localStorage.setItem('importFields', JSON.stringify(updated));
       return updated;
@@ -224,7 +235,7 @@ const Settings: React.FC = () => {
   ];
 
   const getColorClass = (color: string) => {
-    const colorOption = colorOptions.find(opt => opt.value === color);
+    const colorOption = colorOptions.find((opt: { value: string }) => opt.value === color);
     return colorOption?.class || 'bg-gray-100 text-gray-800';
   };
 
@@ -234,22 +245,22 @@ const Settings: React.FC = () => {
     switch (type) {
       case 'transaction-type':
         setTransactionTypes(prev => 
-          prev.map(item => item.id === id ? { ...item, isActive: !item.isActive } : item)
+          prev.map((item: TransactionType) => item.id === id ? { ...item, isActive: !item.isActive } : item)
         );
         break;
       case 'bank-account':
         setBankAccounts(prev => 
-          prev.map(item => item.id === id ? { ...item, isActive: !item.isActive } : item)
+          prev.map((item: BankAccount) => item.id === id ? { ...item, isActive: !item.isActive } : item)
         );
         break;
       case 'branch':
         setBranches(prev => 
-          prev.map(item => item.id === id ? { ...item, isActive: !item.isActive } : item)
+          prev.map((item: Branch) => item.id === id ? { ...item, isActive: !item.isActive } : item)
         );
         break;
       case 'customer-field':
         setCustomerFields(prev => 
-          prev.map(item => item.id === id ? { ...item, isActive: !item.isActive } : item)
+          prev.map((item: CustomerField) => item.id === id ? { ...item, isActive: !item.isActive } : item)
         );
         break;
     }
@@ -554,7 +565,7 @@ const Settings: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {importFields.map((f, idx) => (
+                  {importFields.map((f: ImportField, idx: number) => (
                     <tr key={f.key}>
                       <td className="px-2 py-1 border">{f.label}</td>
                       <td className="px-2 py-1 border">

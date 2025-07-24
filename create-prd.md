@@ -54,3 +54,28 @@ Assume the primary reader of the PRD is a **junior developer**. Therefore, requi
 1. Do NOT start implementing the PRD
 2. Make sure to ask the user clarifying questions
 3. Take the user's answers to the clarifying questions and improve the PRD
+
+# Kinh nghiệm thực tế khi phát triển TypeScript React
+
+## 1. Luôn định nghĩa rõ ràng type/interface cho mọi object/mảng
+- Định nghĩa type cho từng loại dữ liệu (ImportField, BankAccount, Branch, ...)
+- Khi dùng mảng, luôn chỉ rõ kiểu phần tử: `const arr: ImportField[] = ...`
+
+## 2. Luôn khai báo type cho tham số trong map/filter/reduce
+- Không để TypeScript tự suy luận kiểu cho các tham số callback.
+- Ví dụ: `arr.map((item: ImportField, idx: number) => ...)`
+
+## 3. Không để biến/const không dùng (TS6133, TS6192)
+- Nếu khai báo biến mà không dùng, hãy xóa đi.
+
+## 4. Luôn chạy `npm run type-check` trước khi commit/push
+- Đảm bảo không có lỗi type trước khi merge code hoặc deploy.
+
+## 5. Sử dụng script prepare đa nền tảng
+- Dùng node script để kiểm tra husky install, tránh lỗi shell trên Windows/Vercel.
+
+## 6. Checklist trước khi push code
+- Xem file `PRE-PUSH-CHECKLIST.md` để đảm bảo không còn lỗi type/lint/build trước khi push.
+
+## 7. Khi chuẩn bị push code
+- Luôn kiểm tra lại checklist, đảm bảo không còn lỗi nào trước khi push lên repository hoặc deploy.

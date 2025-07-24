@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { Transaction, ImportData, ImportError, Customer } from '../../types';
 import { validateTransactionData, parseTransactionData } from '../../utils/importUtils';
-import { formatCurrency, formatDate } from '../../utils/formatting';
 import { LoadingFallback } from '../../components/UI/FallbackUI';
 import { databaseService } from '../../services/database';
 import Button from '../../components/UI/Button';
@@ -158,23 +157,24 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
     { key: 'transaction_date', label: 'Ngày giao dịch', type: 'date', required: true, enabled: true },
     { key: 'description', label: 'Nội dung', type: 'text', required: false, enabled: true },
   ];
-  const fieldTypes = [
-    { value: 'text', label: 'Text' },
-    { value: 'number', label: 'Number' },
-    { value: 'date', label: 'Date' },
-    { value: 'select', label: 'Select' },
-  ];
-  const [importFields, setImportFields] = useState(() => {
+  // Định nghĩa type ImportField ở đầu file nếu chưa có:
+  type ImportField = {
+    key: string;
+    label: string;
+    type: string;
+    required: boolean;
+    enabled: boolean;
+    optionSource?: string;
+    options?: string[];
+  };
+  // Xóa setImportFields nếu không dùng:
+  const [importFields] = useState(() => {
     const saved = localStorage.getItem('importFields');
     return saved ? JSON.parse(saved) : defaultImportFields;
   });
 
-  const handleFieldChange = (idx: number, prop: string, value: any) => {
-    setImportFields(fields => fields.map((f, i) => i === idx ? { ...f, [prop]: value } : f));
-  };
-
   // Đặt ngay sau enabledFields:
-  const emptyRow = importFields.reduce((acc, col) => { acc[col.key] = ''; return acc; }, {} as any);
+  const emptyRow = importFields.reduce((acc: Record<string, string>, col: ImportField) => { acc[col.key] = ''; return acc; }, {} as Record<string, string>);
   const [tableData, setTableData] = useState(() => Array(5).fill(null).map(() => ({ ...emptyRow })));
 
   // Parse and validate data when raw data changes
@@ -214,11 +214,6 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
       isValid: processedData.isValid,
     });
   }, [processedData]);
-
-  const handleRawDataChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setRawData(e.target.value);
-    setCurrentStep(1);
-  }, []);
 
   const handleValidateData = useCallback(() => {
     // Chuyển tableData thành rawData dạng text nếu cần, hoặc validate trực tiếp
@@ -357,7 +352,7 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
     }
 
     // Trong renderDataPreview, lấy danh sách cột từ enabledFields (importFields.filter(f => f.enabled)), giữ đúng thứ tự và label:
-    const previewColumns = importFields.filter(f => f.enabled);
+    const previewColumns = importFields.filter((f: ImportField) => f.enabled);
 
     return (
       <div className="mt-6">
@@ -370,7 +365,7 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
             {/* Render header: */}
             <thead className="bg-gray-50">
               <tr>
-                {previewColumns.map(col => (
+                {previewColumns.map((col: ImportField) => (
                   <th key={col.key} className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {col.label}
                   </th>
@@ -384,7 +379,7 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
                 const hasRowError = rowErrors.length > 0;
                 return (
                   <tr key={index} className={hasRowError ? 'bg-red-50' : ''}>
-                    {previewColumns.map(col => (
+                    {previewColumns.map((col: ImportField) => (
                       <td key={col.key} className={`px-3 py-2 text-sm ${getErrorForCell(index, col.key) ? 'bg-red-100' : ''}`}>
                         {row[col.key] ?? '-'}
                       </td>
@@ -448,15 +443,9 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
   const bankAccounts = JSON.parse(localStorage.getItem('bankAccounts') || '[]');
 
   // Thay thế importFieldConfig và importSamples bằng các giá trị động dựa trên importFields:
-  const enabledFields = importFields.filter(f => f.enabled);
-  const importFieldConfig = enabledFields.map(f => {
-    let note = f.required ? 'Bắt buộc' : 'Tùy chọn';
-    if (f.type === 'branch-select') note += `. Chỉ nhập một trong các giá trị: ${branches.map((b: any) => b.name).join(', ')}`;
-    if (f.type === 'bank-select') note += `. Chỉ nhập một trong các giá trị: ${bankAccounts.map((b: any) => b.bankName).join(', ')}`;
-    return { name: f.label, type: f.type, required: f.required, note };
-  });
+  const enabledFields = importFields.filter((f: ImportField) => f.enabled);
   const importSamples = [
-    enabledFields.map(f => {
+    enabledFields.map((f: ImportField) => {
       switch (f.type) {
         case 'number': return '1000000';
         case 'date': return '01/07/2024';
@@ -464,7 +453,7 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
         default: return f.label;
       }
     }).join(', '),
-    enabledFields.map(f => {
+    enabledFields.map((f: ImportField) => {
       switch (f.type) {
         case 'number': return '500000';
         case 'date': return '02/07/2024';
@@ -472,7 +461,7 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
         default: return f.label + ' 2';
       }
     }).join(', '),
-    enabledFields.map(f => {
+    enabledFields.map((f: ImportField) => {
       switch (f.type) {
         case 'number': return '1500000';
         case 'date': return '03/07/2024';
@@ -553,12 +542,12 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
                   data={tableData}
                   errors={importData.errors}
                   onDataChange={setTableData}
-                  columns={enabledFields.map(f => ({
+                  columns={enabledFields.map((f: ImportField) => ({
                     key: f.key,
                     label: f.label,
                     required: f.required,
                     type: f.type,
-                    options: f.type === 'select' ? (f.optionSource === 'manual' ? (f.options || []) : f.optionSource === 'bank' ? bankAccounts.map(b => b.bankName) : f.optionSource === 'branch' ? branches.map(b => b.name) : []) : undefined
+                    options: f.type === 'select' ? (f.optionSource === 'manual' ? (f.options || []) : f.optionSource === 'bank' ? bankAccounts.map((b: any) => b.bankName) : f.optionSource === 'branch' ? branches.map((b: any) => b.name) : []) : undefined
                   }))}
                   maxRows={100}
                 />
@@ -568,7 +557,7 @@ const TransactionImport: React.FC<TransactionImportProps> = ({ onImportComplete 
                     {importSamples.map((sample, idx) => (
                       <div key={idx} className="flex items-center space-x-2">
                         <code className="bg-gray-100 px-2 py-1 rounded text-sm">{sample}</code>
-                        <Button size="sm" variant="secondary" onClick={() => setTableData(sample.split(',').map(s => ({ ...emptyRow, ...enabledFields.reduce((acc, f) => { acc[f.key] = s.trim(); return acc; }, {} as any) })))}>
+                        <Button size="sm" variant="secondary" onClick={() => setTableData(sample.split(',').map((s: string) => ({ ...emptyRow, ...enabledFields.reduce((acc: Record<string, string>, f: ImportField) => { acc[f.key] = s.trim(); return acc; }, {} as Record<string, string>) })))}>
                           Dán vào ô nhập
                         </Button>
                       </div>
