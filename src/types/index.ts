@@ -1,75 +1,88 @@
 import React from 'react'
 
 // Database Types
+export interface Tenant {
+  id: string;
+  name: string;
+  slug: string;
+  domain?: string;
+  settings: Record<string, any>;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface User {
-  id: string
-  email: string
-  full_name?: string
-  phone?: string
-  position?: string
-  role: UserRole
-  branch_id?: string
-  branch?: Branch
-  created_at: string
-  updated_at: string
+  id: string;
+  email: string;
+  full_name?: string;
+  role: 'admin' | 'branch_manager' | 'staff';
+  tenant_id?: string; // Add tenant_id
+  branch_id?: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Branch {
-  id: string
-  name: string
-  code: string
-  address?: string
-  phone?: string
-  email?: string
-  manager_id?: string
-  is_active: boolean
-  created_at: string
-  updated_at: string
+  id: string;
+  name: string;
+  code: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  tenant_id?: string; // Add tenant_id
+  manager_id?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface BankAccount {
-  id: string
-  account_number: string
-  account_name: string
-  bank_name: string
-  branch_id: string
-  balance: number
-  is_active: boolean
-  created_at: string
-  updated_at: string
+  id: string;
+  account_number: string;
+  account_name: string;
+  bank_name: string;
+  tenant_id?: string; // Add tenant_id
+  branch_id?: string | null;
+  balance: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Customer {
-  id: string
-  customer_code: string
-  full_name: string
-  phone?: string
-  email?: string
-  address?: string
-  branch_id?: string | null
-  total_balance: number
-  last_transaction_date?: string
-  is_active: boolean
-  created_at: string
-  updated_at: string
+  id: string;
+  customer_code: string;
+  full_name: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  tenant_id?: string; // Add tenant_id
+  branch_id?: string | null;
+  total_balance: number;
+  last_transaction_date?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Transaction {
-  id: string
-  transaction_code: string
-  customer_id: string
-  customer_name?: string
-  bank_account_id: string
-  bank_account_name?: string
-  branch_id: string
-  transaction_type: TransactionType
-  amount: number
-  description?: string
-  reference_number?: string
-  transaction_date: string
-  created_by: string
-  created_at: string
-  updated_at: string
+  id: string;
+  transaction_code: string;
+  customer_id: string;
+  customer_name?: string;
+  bank_account_id: string;
+  bank_account_name?: string;
+  tenant_id?: string; // Add tenant_id
+  branch_id: string;
+  transaction_type: 'payment' | 'charge' | 'adjustment' | 'refund';
+  amount: number;
+  description?: string;
+  reference_number?: string;
+  transaction_date: string;
+  created_by?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 // Enums
@@ -133,6 +146,14 @@ export interface ImportError {
 }
 
 // Dashboard Types
+// Cash Flow Types
+export interface CashFlowItem {
+  date: string
+  inflow: number
+  outflow: number
+  netFlow: number
+}
+
 export interface DashboardMetrics {
   totalOutstanding: number
   activeCustomers: number
@@ -141,6 +162,7 @@ export interface DashboardMetrics {
   balanceByBranch: BalanceByBranch[]
   recentTransactions: Transaction[]
   topCustomers: Customer[]
+  cashFlowData: CashFlowItem[]
 }
 
 export interface BalanceByBranch {
