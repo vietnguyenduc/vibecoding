@@ -331,19 +331,108 @@ export const branchService = {
 export const dashboardService = {
   async getDashboardMetrics(_branchId?: string, _timeRange: 'day' | 'week' | 'month' | 'quarter' | 'year' = 'month') {
     try {
-      // Basic implementation - you can enhance this with more complex queries
-      const { data: customers } = await supabase.from('customers').select('total_balance').eq('is_active', true);
-      const { data: transactions } = await supabase.from('transactions').select('amount, transaction_type').limit(100);
+      console.log('📊 Fetching dashboard metrics...', { branchId: _branchId, timeRange: _timeRange });
+      
+      // Get current user's tenant_id for filtering
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser) {
+        console.error('❌ No authenticated user found');
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      // Get tenant_id from JWT claims
+      const tenantId = (currentUser as any).app_metadata?.tenant_id;
+      console.log('🏢 Using tenant_id:', tenantId);
+
+      // Fetch data based on tenant, not branch (for multi-tenant support)
+      const customersQuery = supabase
+        .from('customers')
+        .select('total_balance')
+        .eq('is_active', true);
+      
+      // Enhanced transaction query with proper joins for display
+      const transactionsQuery = supabase
+        .from('transactions')
+        .select(`
+          id,
+          amount,
+          transaction_type,
+          description,
+          created_at,
+          customer_id,
+          bank_account_id,
+          customers!inner(id, full_name, customer_code),
+          bank_accounts(id, account_number, bank_name)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      // Add tenant filtering if available
+      if (tenantId) {
+        customersQuery.eq('tenant_id', tenantId);
+        transactionsQuery.eq('tenant_id', tenantId);
+      }
+
+      const [customersResult, transactionsResult] = await Promise.all([
+        customersQuery,
+        transactionsQuery
+      ]);
+
+      const { data: customers } = customersResult;
+      const { data: rawTransactions } = transactionsResult;
+
+      console.log('📊 Raw data fetched:', { 
+        customers: customers?.length, 
+        transactions: rawTransactions?.length 
+      });
+
+      // Transform transactions to match expected interface
+      const transactions = rawTransactions?.map(t => ({
+        id: t.id,
+        transaction_code: '', // Not available in current schema, but needed for interface
+        amount: parseFloat(t.amount?.toString() || '0'),
+        transaction_type: t.transaction_type,
+        description: t.description || '',
+        transaction_date: t.created_at, // Use created_at as transaction_date
+        created_at: t.created_at,
+        updated_at: t.created_at, // Use created_at as fallback
+        customer_id: t.customer_id,
+        bank_account_id: t.bank_account_id,
+        branch_id: '', // Not directly available from current query
+        tenant_id: tenantId,
+        // Additional fields for display
+        customer_name: (t.customers as any)?.full_name || 'Unknown Customer',
+        customer_code: (t.customers as any)?.customer_code || '',
+        account_number: (t.bank_accounts as any)?.account_number || '',
+        bank_name: (t.bank_accounts as any)?.bank_name || ''
+      })) || [];
+
+      console.log('📊 Processed transactions sample:', transactions.slice(0, 2));
 
       const totalOutstanding = customers?.reduce((sum, c) => sum + (c.total_balance || 0), 0) || 0;
-      const transactionCount = transactions?.length || 0;
+      const transactionCount = transactions.length;
       const activeCustomers = customers?.length || 0;
-      
-      // Calculate payment and charge counts
-      const paymentTransactions = transactions?.filter(t => t.transaction_type === 'payment') || [];
-      const chargeTransactions = transactions?.filter(t => t.transaction_type === 'charge') || [];
+
+      const paymentTransactions = transactions.filter(t => t.transaction_type === 'payment');
+      const chargeTransactions = transactions.filter(t => t.transaction_type === 'charge');
       const transactionPaymentCount = paymentTransactions.length;
       const transactionChargeCount = chargeTransactions.length;
+
+      // Get top customers with balances
+      const topCustomersQuery = supabase
+        .from('customers')
+        .select('id, full_name, customer_code, total_balance')
+        .eq('is_active', true)
+        .order('total_balance', { ascending: false })
+        .limit(10);
+
+      if (tenantId) {
+        topCustomersQuery.eq('tenant_id', tenantId);
+      }
+
+      const { data: topCustomersData } = await topCustomersQuery;
+
+      console.log('✅ Dashboard metrics calculated successfully');
 
       return {
         data: {
@@ -353,10 +442,10 @@ export const dashboardService = {
           activeCustomersChange: 0,
           transactionsInPeriod: transactionCount,
           transactionsInPeriodChange: 0,
-          transactionAmountsInPeriod: transactions?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0,
+          transactionAmountsInPeriod: transactions.reduce((sum, t) => sum + t.amount, 0),
           transactionAmountsInPeriodChange: 0,
-          transactionIncomeInPeriod: paymentTransactions.reduce((sum, t) => sum + (t.amount || 0), 0),
-          transactionDebtInPeriod: chargeTransactions.reduce((sum, t) => sum + (t.amount || 0), 0),
+          transactionIncomeInPeriod: paymentTransactions.reduce((sum, t) => sum + t.amount, 0),
+          transactionDebtInPeriod: chargeTransactions.reduce((sum, t) => sum + t.amount, 0),
           transactionIncomeChange: 0,
           transactionDebtChange: 0,
           transactionPaymentCount,
@@ -370,18 +459,18 @@ export const dashboardService = {
           cashFlowData: [
             {
               date: new Date().toISOString().split('T')[0],
-              inflow: paymentTransactions.reduce((sum, t) => sum + (t.amount || 0), 0),
-              outflow: chargeTransactions.reduce((sum, t) => sum + (t.amount || 0), 0),
-              netFlow: paymentTransactions.reduce((sum, t) => sum + (t.amount || 0), 0) - chargeTransactions.reduce((sum, t) => sum + (t.amount || 0), 0)
+              inflow: paymentTransactions.reduce((sum, t) => sum + t.amount, 0),
+              outflow: chargeTransactions.reduce((sum, t) => sum + t.amount, 0),
+              netFlow: paymentTransactions.reduce((sum, t) => sum + t.amount, 0) - chargeTransactions.reduce((sum, t) => sum + t.amount, 0)
             }
           ],
-          recentTransactions: transactions?.slice(0, 10) || [],
-          topCustomers: customers?.sort((a, b) => (b.total_balance || 0) - (a.total_balance || 0)).slice(0, 10) || [],
+          recentTransactions: transactions.slice(0, 10),
+          topCustomers: topCustomersData || [],
         },
         error: null
       };
     } catch (error) {
-      console.error('Dashboard service error:', error);
+      console.error('💥 Dashboard service error:', error);
       return { data: null, error: 'Failed to fetch dashboard metrics' };
     }
   }

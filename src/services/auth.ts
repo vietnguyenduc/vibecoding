@@ -9,51 +9,47 @@ export class AuthService {
   /**
    * Sign in user with tenant context
    */
-  async signInWithTenant(email: string, password: string, tenantSlug?: string) {
+  async signInWithTenant(email: string, password: string, tenantSlug: string): Promise<{ user: User | null; error: string | null }> {
     try {
-      // 1. Sign in the user
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      console.log('🔐 Starting sign in process...', { email, tenantSlug });
+      
+      // Sign in the user
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (authError) {
-        return { user: null, error: authError.message };
+      console.log('🔐 Sign in result:', { signInData: !!signInData.user, signInError });
+
+      if (signInError) {
+        console.error('❌ Sign in error:', signInError);
+        return { user: null, error: signInError.message };
       }
 
-      if (!authData.user) {
+      if (!signInData.user) {
+        console.error('❌ No user returned from sign in');
         return { user: null, error: 'No user returned from authentication' };
       }
 
-      // 2. Get user profile with tenant information
-      const { data: userProfile, error: profileError } = await supabase
-        .from('users')
-        .select(`
-          *,
-          tenant:tenants(*)
-        `)
-        .eq('id', authData.user.id)
-        .single();
+      console.log('✅ User signed in, fetching profile...');
+
+      // Get user profile with tenant info
+      const { user, error: profileError } = await this.getCurrentUser();
+      
+      console.log('👤 Profile fetch result:', { user: !!user, profileError });
 
       if (profileError) {
-        return { user: null, error: 'Failed to load user profile' };
+        console.error('❌ Profile fetch error:', profileError);
+        return { user: null, error: profileError };
       }
 
-      // 3. If tenant slug is provided, verify user belongs to that tenant
-      if (tenantSlug && userProfile.tenant?.slug !== tenantSlug) {
-        await supabase.auth.signOut();
-        return { user: null, error: 'User does not belong to the specified tenant' };
-      }
-
-      return { 
-        user: userProfile as AuthUser, 
-        error: null 
-      };
+      console.log('✅ Authentication successful!', { userId: user?.id, tenantId: user?.tenant_id });
+      return { user, error: null };
+      
     } catch (error) {
-      return { 
-        user: null, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      };
+      console.error('💥 Authentication exception:', error);
+      const message = error instanceof Error ? error.message : 'Authentication failed';
+      return { user: null, error: message };
     }
   }
 
@@ -80,7 +76,7 @@ export class AuthService {
         return { user: null, error: 'Invalid or inactive tenant' };
       }
 
-      // 2. Sign up the user
+      // 2. Sign up the user with tenant info in metadata
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -88,6 +84,7 @@ export class AuthService {
           data: {
             full_name: fullName,
             tenant_id: tenant.id,
+            role: role,
           }
         }
       });
@@ -100,24 +97,22 @@ export class AuthService {
         return { user: null, error: 'No user returned from sign up' };
       }
 
-      // 3. Create user profile with tenant association
+      // 3. Wait a moment for the trigger to create the user profile
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // 4. Get the user profile that was created by the trigger
       const { data: userProfile, error: profileError } = await supabase
         .from('users')
-        .insert({
-          id: authData.user.id,
-          email,
-          full_name: fullName,
-          tenant_id: tenant.id,
-          role,
-        })
         .select(`
           *,
           tenant:tenants(*)
         `)
+        .eq('id', authData.user.id)
         .single();
 
       if (profileError) {
-        return { user: null, error: 'Failed to create user profile' };
+        console.error('Profile fetch error:', profileError);
+        return { user: null, error: 'User created but failed to load profile. Please try signing in.' };
       }
 
       return { 
@@ -137,15 +132,23 @@ export class AuthService {
    */
   async getCurrentUser(): Promise<{ user: AuthUser | null; error: string | null }> {
     try {
+      console.log('🔍 getCurrentUser: Starting user fetch...');
+      
       const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
 
+      console.log('🔍 getCurrentUser: Auth user result:', { authUser: !!authUser, authError });
+
       if (authError) {
+        console.error('❌ getCurrentUser: Auth error:', authError);
         return { user: null, error: authError.message };
       }
 
       if (!authUser) {
+        console.log('ℹ️ getCurrentUser: No auth user found');
         return { user: null, error: null };
       }
+
+      console.log('🔍 getCurrentUser: Fetching user profile for ID:', authUser.id);
 
       // Get user profile with tenant information
       const { data: userProfile, error: profileError } = await supabase
@@ -157,15 +160,30 @@ export class AuthService {
         .eq('id', authUser.id)
         .single();
 
+      console.log('🔍 getCurrentUser: Profile result:', { userProfile: !!userProfile, profileError });
+
       if (profileError) {
-        return { user: null, error: 'Failed to load user profile' };
+        console.error('❌ getCurrentUser: Profile error:', profileError);
+        return { user: null, error: `Failed to load user profile: ${profileError.message}` };
       }
+
+      if (!userProfile) {
+        console.error('❌ getCurrentUser: No user profile found');
+        return { user: null, error: 'User profile not found' };
+      }
+
+      console.log('✅ getCurrentUser: Success!', { 
+        id: userProfile.id, 
+        email: userProfile.email, 
+        tenant_id: userProfile.tenant_id 
+      });
 
       return { 
         user: userProfile as AuthUser, 
         error: null 
       };
     } catch (error) {
+      console.error('💥 getCurrentUser: Exception:', error);
       return { 
         user: null, 
         error: error instanceof Error ? error.message : 'Unknown error' 

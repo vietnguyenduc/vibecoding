@@ -9,10 +9,10 @@ interface RecentTransactionsProps {
   onMaxItemsChange?: (maxItems: number) => void;
 }
 
-const RecentTransactions: React.FC<RecentTransactionsProps> = ({ 
-  transactions, 
+const RecentTransactions: React.FC<RecentTransactionsProps> = ({
+  transactions,
   maxItems = 10,
-  onMaxItemsChange
+  onMaxItemsChange,
 }) => {
   const { t } = useTranslation();
 
@@ -28,8 +28,8 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
 
   if (!transactions || transactions.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500">{t('dashboard.noTransactions')}</p>
+      <div className='text-center py-8'>
+        <p className='text-gray-500'>{t('dashboard.noTransactions')}</p>
       </div>
     );
   }
@@ -70,72 +70,100 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     <div>
       {/* Display Count Selector */}
       {onMaxItemsChange && (
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-sm text-gray-600">
+        <div className='flex items-center justify-between mb-4'>
+          <span className='text-sm text-gray-600'>
             Hiển thị {maxItems}/{transactions.length}
           </span>
-          <div className="relative">
+          <div className='relative'>
             <select
               value={maxItems}
-              onChange={(e) => {
+              onChange={e => {
                 const newValue = Number(e.target.value);
                 console.log('Changing maxItems from', maxItems, 'to', newValue);
                 onMaxItemsChange(newValue);
               }}
-              className="appearance-none text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 pr-8 text-gray-900 cursor-pointer"
+              className='appearance-none text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 pr-8 text-gray-900 cursor-pointer'
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
               <option value={15}>15</option>
               <option value={20}>20</option>
             </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <div className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
+              <svg
+                className='w-4 h-4 text-gray-400'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M19 9l-7 7-7-7'
+                />
               </svg>
             </div>
           </div>
         </div>
       )}
-      
-      <div className="space-y-3">
-        {displayTransactions.map((transaction) => (
+
+      <div className='space-y-3'>
+        {displayTransactions.map(transaction => (
           <div
             key={transaction.id}
-            className="grid grid-cols-[auto_1fr_auto] gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            className='grid grid-cols-[auto_1fr_auto] gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'
           >
             {/* Date - Apple Style - Fixed Width */}
-            <div className="w-20 flex justify-center">
-              <div className="text-center">
-                <div className="text-lg font-bold text-gray-900 leading-none">
-                  {new Date(transaction.transaction_date).getDate()}
+            <div className='w-20 flex justify-center'>
+              <div className='text-center'>
+                <div className='text-lg font-bold text-gray-900 leading-none'>
+                  {new Date(
+                    transaction.transaction_date || transaction.created_at
+                  ).getDate()}
                 </div>
-                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">
-                  {new Date(transaction.transaction_date).toLocaleDateString('vi-VN', { month: 'short' })}
+                <div className='text-xs text-gray-500 font-medium uppercase tracking-wide'>
+                  {new Date(
+                    transaction.transaction_date || transaction.created_at
+                  ).toLocaleDateString('vi-VN', { month: 'short' })}
                 </div>
               </div>
             </div>
-            
+
             {/* Transaction Content - Flexible Width */}
-            <div className="min-w-0">
-              <p className="text-sm font-medium text-gray-900 leading-tight">
-                {transaction.description || transaction.customer_name || t('dashboard.customerId', { id: transaction.customer_id })}
+            <div className='min-w-0'>
+              <p className='text-sm font-medium text-gray-900 leading-tight'>
+                {transaction.description ||
+                  transaction.customer_name ||
+                  t('dashboard.customerId', { id: transaction.customer_id })}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {transaction.customer_name || t('dashboard.customerId', { id: transaction.customer_id })} • {transaction.bank_account_name || t('dashboard.accountId', { id: transaction.bank_account_id })} • {getBranchName(transaction.branch_id)}
+              <p className='text-xs text-gray-500 mt-1'>
+                {transaction.customer_name ||
+                  t('dashboard.customerId', {
+                    id: transaction.customer_id,
+                  })}{' '}
+                •{' '}
+                {(transaction as any).bank_name ||
+                  (transaction as any).account_number ||
+                  t('dashboard.accountId', {
+                    id: transaction.bank_account_id,
+                  })}{' '}
+                • {getBranchName(transaction.branch_id)}
               </p>
             </div>
-            
+
             {/* Amount and Transaction Type - Fixed Width */}
-            <div className="w-32 text-right">
+            <div className='w-32 text-right'>
               <p
                 className={`text-sm font-bold ${
-                  transaction.transaction_type === 'payment' ? 'text-green-600' : 'text-red-600'
+                  transaction.transaction_type === 'payment'
+                    ? 'text-green-600'
+                    : 'text-red-600'
                 }`}
               >
                 {formatCurrency(transaction.amount)}
               </p>
-              <div className="mt-1 flex justify-end">
+              <div className='mt-1 flex justify-end'>
                 <span
                   className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${getTransactionTypeColor(
                     transaction.transaction_type
@@ -147,10 +175,10 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
             </div>
           </div>
         ))}
-        
+
         {transactions.length > maxItems && !onMaxItemsChange && (
-          <div className="text-center pt-2">
-            <p className="text-sm text-gray-500">
+          <div className='text-center pt-2'>
+            <p className='text-sm text-gray-500'>
               Hiển thị {maxItems}/{transactions.length} giao dịch
             </p>
           </div>
@@ -160,4 +188,4 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
   );
 };
 
-export default RecentTransactions; 
+export default RecentTransactions;

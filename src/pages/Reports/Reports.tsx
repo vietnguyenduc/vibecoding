@@ -93,7 +93,7 @@ const Reports: React.FC = () => {
   // Generate Key Metrics Summary Report
   const generateKeyMetricsReport = async () => {
     const metrics = await databaseService.dashboard.getDashboardMetrics(
-      user?.branch_id
+      user?.branch_id || undefined
     );
 
     if (metrics.error) {
@@ -248,7 +248,7 @@ const Reports: React.FC = () => {
   // Generate Cash Flow Report
   const generateCashFlowReport = async () => {
     const metrics = await databaseService.dashboard.getDashboardMetrics(
-      user?.branch_id
+      user?.branch_id || undefined
     );
 
     if (metrics.error) {
